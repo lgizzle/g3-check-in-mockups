@@ -360,7 +360,7 @@
                             <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
                         </h3>
                         <div class="space-y-2">
-                            <button onclick="showDayPassModal()" class="action-btn w-full px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-left flex items-center gap-3 border border-green-200">
+                            <button onclick="showDayPassModalForPerson('Sarah Miller')" class="action-btn w-full px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-left flex items-center gap-3 border border-green-200">
                                 <i class="fas fa-calendar-day w-6"></i>
                                 <span class="font-medium">Sell Day Pass</span>
                             </button>
@@ -509,6 +509,10 @@
                             <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
                         </h3>
                         <div class="space-y-2">
+                            <button onclick="undoCheckIn()" class="action-btn w-full px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 text-left flex items-center gap-3 border border-red-200">
+                                <i class="fas fa-undo w-6"></i>
+                                <span>Undo Check-In</span>
+                            </button>
                             <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-left flex items-center gap-3 border border-blue-200">
                                 <i class="fas fa-cash-register w-6"></i>
                                 <span>POS - Sell Item</span>
@@ -605,6 +609,79 @@
             </div>
         </div>
 
+        <!-- SCENARIO: Newly Added Person (Robert Wilson) -->
+        <div id="scenario-new-person" class="scenario-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Person Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner -->
+                        <div class="bg-blue-500 text-white px-6 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-user-plus text-2xl"></i>
+                                <span class="text-lg font-bold">NEW PERSON - No Membership or Services</span>
+                            </div>
+                            <span class="text-blue-100">Just added to system</span>
+                        </div>
+
+                        <!-- Person Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=RW"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">Robert Wilson</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">ID:</span> <span class="font-medium">9999</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">06/12/1995 (30)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 000-0000</span></div>
+                                        <div><span class="text-gray-500">Added:</span> <span class="font-medium text-blue-600">Just now</span></div>
+                                    </div>
+
+                                    <!-- New Person Info -->
+                                    <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                        <p class="text-sm text-blue-800">
+                                            <i class="fas fa-info-circle mr-2"></i>This person was just added. Sell them a day pass, service package, or membership.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions - Prominent for sales -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="showDayPassModalForPerson('Robert Wilson')" class="action-btn w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 text-left flex items-center gap-3 font-medium pulse">
+                                <i class="fas fa-calendar-day w-6"></i>
+                                <div>
+                                    <span class="block">Sell Day Pass</span>
+                                    <span class="text-xs text-green-100">$15.00</span>
+                                </div>
+                            </button>
+                            <button onclick="alert('Service Package sale flow would open here...')" class="action-btn w-full px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-left flex items-center gap-3 border border-purple-200">
+                                <i class="fas fa-box w-6"></i>
+                                <span>Sell Service Package</span>
+                            </button>
+                            <button onclick="alert('Membership enrollment flow would open here...')" class="action-btn w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-left flex items-center gap-3 font-medium">
+                                <i class="fas fa-user-plus w-6"></i>
+                                <span>Add as Member</span>
+                            </button>
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-left flex items-center gap-3 border border-gray-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- SCENARIO: Person Not Found -->
         <div id="scenario-not-found" class="scenario-content hidden">
             <div class="bg-white rounded-lg shadow-md p-8 text-center">
@@ -674,7 +751,7 @@
             <div class="p-6">
                 <div class="text-center mb-6">
                     <p class="text-gray-600 mb-1">Day Pass for</p>
-                    <p class="text-xl font-bold">Mike Johnson</p>
+                    <p class="text-xl font-bold" id="daypass-person-name">Mike Johnson</p>
                     <p class="text-3xl font-bold text-green-600 mt-2">$15.00</p>
                 </div>
 
@@ -839,7 +916,16 @@
             showToast(service.name + ': Visit deducted! ' + service.visits + ' remaining.');
         }
 
+        // Track current person for day pass modal
+        let currentDayPassPerson = 'Mike Johnson';
+
         function showDayPassModal() {
+            showDayPassModalForPerson('Mike Johnson');
+        }
+
+        function showDayPassModalForPerson(personName) {
+            currentDayPassPerson = personName;
+            document.getElementById('daypass-person-name').textContent = personName;
             document.getElementById('daypass-modal').classList.remove('hidden');
         }
 
@@ -849,7 +935,7 @@
 
         function completeDayPassSale() {
             hideDayPassModal();
-            showToast('Day Pass sold! Mike Johnson checked in.');
+            showToast('Day Pass sold! ' + currentDayPassPerson + ' checked in.');
             // Transition to the checked-in state
             setTimeout(() => showScenario('daypass-checkedin'), 500);
         }
@@ -877,7 +963,7 @@
         function addPerson() {
             hideAddPersonModal();
             showToast('Robert Wilson added to system!');
-            setTimeout(() => showScenario('no-services'), 500);
+            setTimeout(() => showScenario('new-person'), 500);
         }
 
         // POS redirect function
