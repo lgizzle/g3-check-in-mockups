@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 Check-In Enhancement - Mockups</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .nav-btn { transition: all 0.2s; }
+        .nav-btn.active {
+            background-color: white;
+            color: #1e3a8a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-btn:not(.active):hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        #mockup-frame {
+            height: calc(100vh - 140px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-4">
+                    <img src="https://placehold.co/50x50/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
+                    <div>
+                        <h1 class="text-xl font-bold">G3 Check-In Enhancement</h1>
+                        <p class="text-blue-200 text-sm">Interactive Mockups - November 2025</p>
+                    </div>
+                </div>
+                <div class="text-right text-sm">
+                    <p class="text-blue-200">Project: 2025-11-checkin-pos-enhancement</p>
+                    <p class="text-blue-300 text-xs">Critical Deadline: January 2026</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex gap-2">
+                <button onclick="loadMockup('enhanced-checkin-screen.html', this)"
+                        class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2 active" id="nav-checkin">
+                    <i class="fas fa-user-check"></i>
+                    <span>Check-In Screen</span>
+                </button>
+                <button onclick="loadMockup('checkin-report-enhanced.html', this)"
+                        class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2" id="nav-report">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Check-In Report</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Description Bar -->
+    <div class="bg-white border-b px-6 py-3 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div id="mockup-description">
+                <h2 class="font-bold text-gray-800" id="desc-title">Enhanced Check-In Screen</h2>
+                <p class="text-sm text-gray-600" id="desc-text">Main front-desk interface with quick actions for day passes, punch cards, and new visitors</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="#" onclick="openInNewTab(); return false;" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
+                    <i class="fas fa-external-link-alt"></i>
+                    Open in new tab
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Iframe Container -->
+    <main class="flex-1 p-4">
+        <div class="max-w-7xl mx-auto h-full">
+            <iframe id="mockup-frame"
+                    src="enhanced-checkin-screen.html"
+                    class="w-full rounded-lg shadow-lg bg-white border"
+                    frameborder="0">
+            </iframe>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-3 px-6 text-center text-sm">
+        <p>G3 Sports & Fitness - Check-In Enhancement Project | Mockups for review and testing</p>
+    </footer>
+
+    <script>
+        // Mockup metadata
+        const mockupInfo = {
+            'enhanced-checkin-screen.html': {
+                title: 'Enhanced Check-In Screen',
+                description: 'Main front-desk interface with quick actions for day passes, punch cards, and new visitors',
+                nav: 'nav-checkin'
+            },
+            'checkin-report-enhanced.html': {
+                title: 'Enhanced Check-In Report',
+                description: 'Report showing ALL visitors (members + non-members) for insurance compliance',
+                nav: 'nav-report'
+            }
+        };
+
+        let currentMockup = 'enhanced-checkin-screen.html';
+
+        function loadMockup(filename, btnElement) {
+            currentMockup = filename;
+
+            // Update iframe
+            document.getElementById('mockup-frame').src = filename;
+
+            // Update active button
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Update description
+            const info = mockupInfo[filename];
+            document.getElementById('desc-title').textContent = info.title;
+            document.getElementById('desc-text').textContent = info.description;
+        }
+
+        function openInNewTab() {
+            window.open(currentMockup, '_blank');
+        }
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') document.getElementById('nav-checkin').click();
+            if (e.key === '2') document.getElementById('nav-report').click();
+        });
+    </script>
+</body>
+</html>

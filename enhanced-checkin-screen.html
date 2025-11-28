@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 Enhanced Check-In Screen - Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .scenario-btn { transition: all 0.2s; }
+        .scenario-btn.active { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+        .action-btn { transition: all 0.15s; }
+        .action-btn:hover { transform: translateY(-2px); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-4 px-6 shadow-lg">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://placehold.co/50x50/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
+                <div>
+                    <h1 class="text-xl font-bold">G3 Sports & Fitness</h1>
+                    <p class="text-blue-200 text-sm">Check-In Station - Main Location</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-blue-200">Logged in as: Front Desk</p>
+                <p class="text-xs text-blue-300">Nov 27, 2025 10:45 AM</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Scenario Selector (for mockup demo) -->
+    <div class="bg-yellow-50 border-b border-yellow-200 py-3 px-6">
+        <div class="max-w-6xl mx-auto">
+            <p class="text-sm text-yellow-800 mb-2"><i class="fas fa-info-circle"></i> <strong>MOCKUP DEMO:</strong> Click scenarios to see different check-in states</p>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="showScenario('member')" class="scenario-btn px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm border border-green-300 hover:bg-green-200 active" id="btn-member">Active Member</button>
+                <button onclick="showScenario('services')" class="scenario-btn px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm border border-purple-300 hover:bg-purple-200" id="btn-services">Has Punch Cards</button>
+                <button onclick="showScenario('no-services')" class="scenario-btn px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm border border-orange-300 hover:bg-orange-200" id="btn-no-services">No Active Services</button>
+                <button onclick="showScenario('not-found')" class="scenario-btn px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm border border-red-300 hover:bg-red-200" id="btn-not-found">Person Not Found</button>
+            </div>
+            <p class="text-xs text-yellow-700 mt-2"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Click "Sell Day Pass" from "No Active Services" to see the day pass purchase → check-in flow</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto py-6 px-6">
+        <!-- Search Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex gap-4 items-end">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Member</label>
+                    <div class="relative">
+                        <input type="text" placeholder="Search by name or member ID..."
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                               id="searchInput">
+                        <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                <button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                    <i class="fas fa-user-check mr-2"></i> Check In
+                </button>
+            </div>
+        </div>
+
+        <!-- SCENARIO: Active Member -->
+        <div id="scenario-member" class="scenario-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Member Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner -->
+                        <div class="bg-green-500 text-white px-6 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-check-circle text-2xl"></i>
+                                <span class="text-lg font-bold">ACCESS GRANTED - Active Member</span>
+                            </div>
+                            <span class="text-green-100">Membership valid through 12/31/2025</span>
+                        </div>
+
+                        <!-- Member Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=JD"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">John Doe</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">Member ID:</span> <span class="font-medium">1234</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">05/15/1985 (39)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 123-4567</span></div>
+                                        <div><span class="text-gray-500">Check-ins this month:</span> <span class="font-medium text-blue-600">12</span></div>
+                                    </div>
+
+                                    <!-- Membership Info -->
+                                    <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <p class="text-sm font-medium text-green-800">
+                                            <i class="fas fa-id-card mr-2"></i>Premium Membership - Monthly
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-left flex items-center gap-3 border border-blue-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                            <button onclick="alert('Edit Profile would open member profile editor...')" class="action-btn w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-left flex items-center gap-3 border border-gray-200">
+                                <i class="fas fa-user-edit w-6"></i>
+                                <span>Edit Profile</span>
+                            </button>
+                            <button onclick="alert('View History would show check-in and purchase history...')" class="action-btn w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-left flex items-center gap-3 border border-gray-200">
+                                <i class="fas fa-history w-6"></i>
+                                <span>View History</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENARIO: Has Punch Cards / Services -->
+        <div id="scenario-services" class="scenario-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Member Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner -->
+                        <div class="bg-purple-500 text-white px-6 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-ticket-alt text-2xl"></i>
+                                <span class="text-lg font-bold">HAS ACTIVE SERVICES</span>
+                            </div>
+                            <span class="text-purple-100">Not a member - Service holder</span>
+                        </div>
+
+                        <!-- Person Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=SM"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">Sarah Miller</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">ID:</span> <span class="font-medium">5678</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">08/22/1990 (35)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 987-6543</span></div>
+                                        <div><span class="text-gray-500">Check-ins this month:</span> <span class="font-medium text-blue-600">3</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Services Section -->
+                            <div class="mt-6">
+                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-list-check text-purple-500"></i> Active Services
+                                </h3>
+                                <div class="space-y-3">
+                                    <!-- Service Card 1 -->
+                                    <div id="service-pickleball" class="p-4 bg-purple-50 rounded-lg border border-purple-200 flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium text-purple-900">Pickleball 10-Pack</p>
+                                            <p class="text-sm text-purple-600">
+                                                <span id="pickleball-visits" class="font-bold text-lg">7</span> of 10 visits remaining
+                                            </p>
+                                            <p class="text-xs text-purple-500">Expires: 06/15/2026</p>
+                                        </div>
+                                        <button id="pickleball-btn" onclick="showDeductModal('pickleball', 'Pickleball 10-Pack')" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium action-btn">
+                                            <i class="fas fa-minus-circle mr-2"></i>Use 1 Visit
+                                        </button>
+                                    </div>
+
+                                    <!-- Service Card 2 (Low visits warning) -->
+                                    <div id="service-training" class="p-4 bg-orange-50 rounded-lg border border-orange-300 flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium text-orange-900">
+                                                Personal Training 5-Pack
+                                                <span id="training-low-badge" class="ml-2 px-2 py-0.5 bg-orange-200 text-orange-800 text-xs rounded-full">LOW</span>
+                                            </p>
+                                            <p class="text-sm text-orange-600">
+                                                <span id="training-visits" class="font-bold text-lg">1</span> of 5 visits remaining
+                                            </p>
+                                            <p class="text-xs text-orange-500">Expires: 03/01/2026</p>
+                                        </div>
+                                        <button id="training-btn" onclick="showDeductModal('training', 'Personal Training 5-Pack')" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium action-btn">
+                                            <i class="fas fa-minus-circle mr-2"></i>Use 1 Visit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="showDayPassModal()" class="action-btn w-full px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-left flex items-center gap-3 border border-green-200">
+                                <i class="fas fa-calendar-day w-6"></i>
+                                <span class="font-medium">Sell Day Pass</span>
+                            </button>
+                            <button onclick="alert('Service Package sale flow would open here...')" class="action-btn w-full px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-left flex items-center gap-3 border border-purple-200">
+                                <i class="fas fa-box w-6"></i>
+                                <span>Sell Service Package</span>
+                            </button>
+                            <button onclick="alert('Membership enrollment flow would open here...')" class="action-btn w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-left flex items-center gap-3 border border-blue-200">
+                                <i class="fas fa-user-plus w-6"></i>
+                                <span>Add as Member</span>
+                            </button>
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-left flex items-center gap-3 border border-gray-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENARIO: No Active Services -->
+        <div id="scenario-no-services" class="scenario-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Member Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner -->
+                        <div class="bg-orange-500 text-white px-6 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-exclamation-triangle text-2xl"></i>
+                                <span class="text-lg font-bold">NO ACTIVE MEMBERSHIP OR SERVICES</span>
+                            </div>
+                        </div>
+
+                        <!-- Person Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=MJ"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">Mike Johnson</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">ID:</span> <span class="font-medium">9012</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">11/30/1988 (36)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 456-7890</span></div>
+                                        <div><span class="text-gray-500">Last visit:</span> <span class="font-medium text-gray-600">3 months ago</span></div>
+                                    </div>
+
+                                    <!-- Expired Info -->
+                                    <div class="mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                                        <p class="text-sm text-red-800">
+                                            <i class="fas fa-clock mr-2"></i>Previous membership expired: 08/31/2025
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions - Prominent for sales -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="showDayPassModal()" class="action-btn w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 text-left flex items-center gap-3 font-medium pulse">
+                                <i class="fas fa-calendar-day w-6"></i>
+                                <div>
+                                    <span class="block">Sell Day Pass</span>
+                                    <span class="text-xs text-green-100">$15.00</span>
+                                </div>
+                            </button>
+                            <button onclick="alert('Service Package sale flow would open here...')" class="action-btn w-full px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-left flex items-center gap-3 border border-purple-200">
+                                <i class="fas fa-box w-6"></i>
+                                <span>Sell Service Package</span>
+                            </button>
+                            <button onclick="alert('Membership enrollment flow would open here...')" class="action-btn w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-left flex items-center gap-3 font-medium">
+                                <i class="fas fa-user-plus w-6"></i>
+                                <span>Add as Member</span>
+                            </button>
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-left flex items-center gap-3 border border-gray-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENARIO: Day Pass - Checked In (after sale + auto check-in) -->
+        <div id="scenario-daypass-checkedin" class="scenario-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Person Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner - SUCCESS -->
+                        <div class="bg-green-500 text-white px-6 py-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-check-circle text-2xl"></i>
+                                    <div>
+                                        <span class="text-lg font-bold">ACCESS GRANTED - Day Pass</span>
+                                        <p class="text-green-100 text-sm">Checked in at 10:45 AM</p>
+                                    </div>
+                                </div>
+                                <span class="text-green-100">Valid today only</span>
+                            </div>
+                        </div>
+
+                        <!-- Person Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=MJ"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">Mike Johnson</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">ID:</span> <span class="font-medium">9012</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">11/30/1988 (36)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 456-7890</span></div>
+                                        <div><span class="text-gray-500">Check-ins today:</span> <span class="font-medium text-green-600">1</span></div>
+                                    </div>
+
+                                    <!-- Day Pass Info -->
+                                    <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <p class="text-sm font-medium text-green-800">
+                                            <i class="fas fa-calendar-day mr-2"></i>Day Pass - Nov 27, 2025
+                                        </p>
+                                        <p class="text-xs text-green-600 mt-1">Paid $15.00 via Cash</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-left flex items-center gap-3 border border-blue-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                            <button onclick="alert('Service Package sale flow would open here...')" class="action-btn w-full px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-left flex items-center gap-3 border border-purple-200">
+                                <i class="fas fa-box w-6"></i>
+                                <span>Sell Service Package</span>
+                            </button>
+                            <button onclick="alert('Membership enrollment flow would open here...')" class="action-btn w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-left flex items-center gap-3 font-medium">
+                                <i class="fas fa-user-plus w-6"></i>
+                                <span>Add as Member</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENARIO: Day Pass - Not Yet Used (after undo or bought for later) -->
+        <div id="scenario-daypass-pending" class="scenario-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Person Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner - HAS DAY PASS -->
+                        <div class="bg-purple-500 text-white px-6 py-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-ticket-alt text-2xl"></i>
+                                    <span class="text-lg font-bold">HAS DAY PASS - Not Yet Checked In</span>
+                                </div>
+                                <span class="text-purple-100">Valid today only</span>
+                            </div>
+                        </div>
+
+                        <!-- Person Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=MJ"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">Mike Johnson</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">ID:</span> <span class="font-medium">9012</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">11/30/1988 (36)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 456-7890</span></div>
+                                        <div><span class="text-gray-500">Last visit:</span> <span class="font-medium text-gray-600">3 months ago</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Day Pass Service Card -->
+                            <div class="mt-6">
+                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-ticket-alt text-purple-500"></i> Available Pass
+                                </h3>
+                                <div class="p-4 bg-purple-50 rounded-lg border border-purple-200 flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium text-purple-900">Day Pass (Gym Access)</p>
+                                        <p class="text-sm text-purple-600">Valid today: Nov 27, 2025</p>
+                                        <p class="text-xs text-purple-500">Purchased at 10:42 AM</p>
+                                    </div>
+                                    <button onclick="checkInDayPass()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium action-btn">
+                                        <i class="fas fa-check-circle mr-2"></i>Check In Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-left flex items-center gap-3 border border-blue-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                            <button onclick="alert('Service Package sale flow would open here...')" class="action-btn w-full px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-left flex items-center gap-3 border border-purple-200">
+                                <i class="fas fa-box w-6"></i>
+                                <span>Sell Service Package</span>
+                            </button>
+                            <button onclick="alert('Membership enrollment flow would open here...')" class="action-btn w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-left flex items-center gap-3 font-medium">
+                                <i class="fas fa-user-plus w-6"></i>
+                                <span>Add as Member</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENARIO: Person Not Found -->
+        <div id="scenario-not-found" class="scenario-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-8 text-center">
+                <div class="max-w-md mx-auto">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-slash text-3xl text-red-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Person Not Found</h2>
+                    <p class="text-gray-600 mb-6">No results found for "Robert Wilson". Would you like to add them to the system?</p>
+
+                    <div class="space-y-3">
+                        <button onclick="showAddPersonModal()" class="w-full px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-lg action-btn">
+                            <i class="fas fa-user-plus mr-2"></i>Add New Person
+                        </button>
+                        <button onclick="document.getElementById('searchInput').focus(); document.getElementById('searchInput').select();" class="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">
+                            <i class="fas fa-search mr-2"></i>Search Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: Deduct Visit Confirmation -->
+    <div id="deduct-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-ticket-alt text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Confirm Visit Deduction</h3>
+                        <p class="text-gray-600" id="deduct-service-name">Pickleball 10-Pack</p>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Current Balance:</span>
+                        <span class="font-medium" id="deduct-current-visits">7 visits</span>
+                    </div>
+                    <div class="flex justify-between text-sm mt-2">
+                        <span class="text-gray-600">After Deduction:</span>
+                        <span class="font-bold text-purple-600" id="deduct-remaining-visits">6 visits</span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="hideDeductModal()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDeduct()" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                        <i class="fas fa-check mr-2"></i>Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Sell Day Pass -->
+    <div id="daypass-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="bg-green-500 text-white px-6 py-4 rounded-t-lg">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fas fa-calendar-day"></i> Sell Day Pass
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <p class="text-gray-600 mb-1">Day Pass for</p>
+                    <p class="text-xl font-bold">Mike Johnson</p>
+                    <p class="text-3xl font-bold text-green-600 mt-2">$15.00</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="px-3 py-3 border-2 border-green-500 bg-green-50 text-green-700 rounded-lg font-medium">
+                            <i class="fas fa-money-bill block text-xl mb-1"></i>
+                            Cash
+                        </button>
+                        <button class="px-3 py-3 border-2 border-gray-200 bg-white text-gray-700 rounded-lg hover:border-gray-300">
+                            <i class="fas fa-credit-card block text-xl mb-1"></i>
+                            Card
+                        </button>
+                        <button class="px-3 py-3 border-2 border-gray-200 bg-white text-gray-700 rounded-lg hover:border-gray-300">
+                            <i class="fas fa-building block text-xl mb-1"></i>
+                            House
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="hideDayPassModal()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button onclick="completeDayPassSale()" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                        <i class="fas fa-check mr-2"></i>Complete Sale
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Add New Person -->
+    <div id="addperson-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+            <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fas fa-user-plus"></i> Add New Person
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
+                        <input type="text" value="Robert" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+                        <input type="text" value="Wilson" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
+                        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+                        <input type="tel" placeholder="(555) 000-0000" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-gray-400">(optional)</span></label>
+                    <input type="email" placeholder="email@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="bg-blue-50 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-blue-800">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        After adding, you can sell a day pass or service package.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="hideAddPersonModal()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button onclick="addPerson()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                        <i class="fas fa-plus mr-2"></i>Add Person
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="success-toast" class="fixed bottom-6 right-6 bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg hidden z-50 flex items-center gap-3">
+        <i class="fas fa-check-circle text-xl"></i>
+        <span id="toast-message">Action completed successfully!</span>
+    </div>
+
+    <script>
+        function showScenario(scenario) {
+            // Hide all scenarios
+            document.querySelectorAll('.scenario-content').forEach(el => el.classList.add('hidden'));
+            // Remove active from all buttons
+            document.querySelectorAll('.scenario-btn').forEach(el => el.classList.remove('active'));
+
+            // Show selected scenario
+            document.getElementById('scenario-' + scenario).classList.remove('hidden');
+            document.getElementById('btn-' + scenario).classList.add('active');
+        }
+
+        // Service visit tracking
+        const serviceData = {
+            pickleball: { name: 'Pickleball 10-Pack', visits: 7, total: 10 },
+            training: { name: 'Personal Training 5-Pack', visits: 1, total: 5 }
+        };
+        let currentServiceKey = '';
+
+        function showDeductModal(serviceKey, serviceName) {
+            currentServiceKey = serviceKey;
+            const service = serviceData[serviceKey];
+            const remaining = service.visits - 1;
+
+            document.getElementById('deduct-service-name').textContent = serviceName;
+            document.getElementById('deduct-current-visits').textContent = service.visits + ' visits';
+            document.getElementById('deduct-remaining-visits').textContent = remaining + ' visits';
+            document.getElementById('deduct-modal').classList.remove('hidden');
+        }
+
+        function hideDeductModal() {
+            document.getElementById('deduct-modal').classList.add('hidden');
+        }
+
+        function confirmDeduct() {
+            const service = serviceData[currentServiceKey];
+            service.visits--;
+
+            // Update the UI
+            const visitsEl = document.getElementById(currentServiceKey + '-visits');
+            visitsEl.textContent = service.visits;
+
+            // Handle zero visits - disable button and show DEPLETED
+            if (service.visits === 0) {
+                const btn = document.getElementById(currentServiceKey + '-btn');
+                btn.disabled = true;
+                btn.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'bg-orange-600', 'hover:bg-orange-700');
+                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                btn.innerHTML = '<i class="fas fa-ban mr-2"></i>No Visits Left';
+
+                // Update card styling
+                const card = document.getElementById('service-' + currentServiceKey);
+                card.classList.remove('bg-purple-50', 'border-purple-200', 'bg-orange-50', 'border-orange-300');
+                card.classList.add('bg-gray-100', 'border-gray-300');
+            }
+            // Show LOW badge if visits are low (1 or 2 remaining)
+            else if (service.visits <= 2 && currentServiceKey === 'pickleball') {
+                const card = document.getElementById('service-pickleball');
+                card.classList.remove('bg-purple-50', 'border-purple-200');
+                card.classList.add('bg-orange-50', 'border-orange-300');
+                // Add LOW badge if not already there
+                const nameEl = card.querySelector('.font-medium');
+                if (!nameEl.querySelector('.rounded-full')) {
+                    nameEl.innerHTML += ' <span class="ml-2 px-2 py-0.5 bg-orange-200 text-orange-800 text-xs rounded-full">LOW</span>';
+                }
+            }
+
+            hideDeductModal();
+            showToast(service.name + ': Visit deducted! ' + service.visits + ' remaining.');
+        }
+
+        function showDayPassModal() {
+            document.getElementById('daypass-modal').classList.remove('hidden');
+        }
+
+        function hideDayPassModal() {
+            document.getElementById('daypass-modal').classList.add('hidden');
+        }
+
+        function completeDayPassSale() {
+            hideDayPassModal();
+            showToast('Day Pass sold! Mike Johnson checked in.');
+            // Transition to the checked-in state
+            setTimeout(() => showScenario('daypass-checkedin'), 500);
+        }
+
+        function undoCheckIn() {
+            showToast('Check-in undone. Day pass still valid for today.');
+            // Transition to the pending state
+            showScenario('daypass-pending');
+        }
+
+        function checkInDayPass() {
+            showToast('Mike Johnson checked in!');
+            // Transition to the checked-in state
+            showScenario('daypass-checkedin');
+        }
+
+        function showAddPersonModal() {
+            document.getElementById('addperson-modal').classList.remove('hidden');
+        }
+
+        function hideAddPersonModal() {
+            document.getElementById('addperson-modal').classList.add('hidden');
+        }
+
+        function addPerson() {
+            hideAddPersonModal();
+            showToast('Robert Wilson added to system!');
+            setTimeout(() => showScenario('no-services'), 500);
+        }
+
+        // POS redirect function
+        function goToMainPOS() {
+            alert('Would redirect to main POS screen with current person pre-selected.\n\nURL: /admin/pos?user_id=9012');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('success-toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        // Close modals on backdrop click
+        document.querySelectorAll('[id$="-modal"]').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

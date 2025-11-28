@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 Check-In Report (Enhanced) - Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .badge { font-size: 0.7rem; padding: 0.15rem 0.5rem; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://placehold.co/50x50/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
+                <div>
+                    <h1 class="text-xl font-bold">G3 Sports & Fitness</h1>
+                    <p class="text-blue-200 text-sm">Check-In Report</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-blue-200">Admin Dashboard</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Comparison Banner -->
+    <div class="bg-yellow-50 border-b border-yellow-200 py-3 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <p class="text-sm text-yellow-800">
+                <i class="fas fa-info-circle mr-1"></i>
+                <strong>MOCKUP:</strong> This shows the enhanced report with ALL visitors (members + non-members). Critical for January 2026 insurance requirement.
+            </p>
+            <div class="flex gap-2">
+                <button onclick="toggleView('current')" id="btn-current" class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300">Current Report</button>
+                <button onclick="toggleView('enhanced')" id="btn-enhanced" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">Enhanced Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-6">
+
+        <!-- Page Title -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Check-In Report</h2>
+                <p class="text-gray-600">All facility visitors for selected date range</p>
+            </div>
+            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                <i class="fas fa-file-export mr-2"></i>Export CSV
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" value="2025-11-01" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" value="2025-11-27" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option>All Locations</option>
+                        <option selected>Main Location</option>
+                        <option>North Branch</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Visit Type</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg" id="visit-type-filter">
+                        <option value="all">All Types</option>
+                        <option value="member">Members Only</option>
+                        <option value="day_pass">Day Pass Only</option>
+                        <option value="punch_card">Punch Card Only</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" id="stats-enhanced">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Visits</p>
+                        <p class="text-2xl font-bold text-gray-900">847</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Member Check-Ins</p>
+                        <p class="text-2xl font-bold text-green-600">724</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-id-card text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Day Pass Sales</p>
+                        <p class="text-2xl font-bold text-purple-600">98</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-calendar-day text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Punch Card Visits</p>
+                        <p class="text-2xl font-bold text-orange-600">25</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-ticket-alt text-orange-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Stats (Members Only) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 hidden" id="stats-current">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Member Check-Ins</p>
+                        <p class="text-2xl font-bold text-gray-900">724</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-red-50 rounded-lg shadow-md p-4 border border-red-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-red-600 font-medium">Missing from Report</p>
+                        <p class="text-2xl font-bold text-red-600">123 visitors</p>
+                        <p class="text-xs text-red-500">Day passes + punch cards not tracked</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Date/Time</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Location</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Name</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">ID</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-600" id="type-header">Visit Type</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Checked In By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-enhanced">
+                        <!-- Member Row -->
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:45 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">John Doe</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">1234</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Day Pass Row (NEW) -->
+                        <tr class="border-b hover:bg-gray-50 bg-purple-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:52 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Emily Chen</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">9876</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-purple-100 text-purple-800 rounded-full">Day Pass</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Member Row -->
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:38 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Mike Johnson</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">2345</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Punch Card Row (NEW) -->
+                        <tr class="border-b hover:bg-gray-50 bg-orange-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:35 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Sarah Miller</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">5678</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-orange-100 text-orange-800 rounded-full">Punch Card</span>
+                                <span class="text-xs text-gray-500 ml-1">Pickleball 10-Pack</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Member Row -->
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:22 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Lisa Williams</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">3456</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Day Pass Row (NEW) -->
+                        <tr class="border-b hover:bg-gray-50 bg-purple-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:15 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Robert Wilson</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">9875</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-purple-100 text-purple-800 rounded-full">Day Pass</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Member Rows -->
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:10 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">David Brown</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">4567</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 09:55 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Jennifer Davis</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">5679</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <!-- Punch Card Row (NEW) -->
+                        <tr class="border-b hover:bg-gray-50 bg-orange-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 09:48 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Tom Anderson</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">7890</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-orange-100 text-orange-800 rounded-full">Punch Card</span>
+                                <span class="text-xs text-gray-500 ml-1">PT 5-Pack</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 09:30 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Amanda Taylor</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">6780</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                    </tbody>
+
+                    <!-- Current Table (Members Only) -->
+                    <tbody id="table-current" class="hidden">
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:45 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">John Doe</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">1234</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:38 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Mike Johnson</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">2345</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:22 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Lisa Williams</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">3456</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 10:10 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">David Brown</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">4567</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 09:55 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Jennifer Davis</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">5679</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm">11/27/2025 09:30 AM</td>
+                            <td class="px-4 py-3 text-sm">Main Location</td>
+                            <td class="px-4 py-3 text-sm font-medium">Amanda Taylor</td>
+                            <td class="px-4 py-3 text-sm text-gray-500">6780</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="badge bg-green-100 text-green-800 rounded-full">Member</span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500">Front Desk</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-4 py-3 border-t bg-gray-50 flex items-center justify-between">
+                <p class="text-sm text-gray-500">Showing 1-10 of <span id="total-count">847</span> results</p>
+                <div class="flex gap-1">
+                    <button class="px-3 py-1 bg-white border rounded hover:bg-gray-50">Previous</button>
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+                    <button class="px-3 py-1 bg-white border rounded hover:bg-gray-50">2</button>
+                    <button class="px-3 py-1 bg-white border rounded hover:bg-gray-50">3</button>
+                    <button class="px-3 py-1 bg-white border rounded hover:bg-gray-50">...</button>
+                    <button class="px-3 py-1 bg-white border rounded hover:bg-gray-50">85</button>
+                    <button class="px-3 py-1 bg-white border rounded hover:bg-gray-50">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insurance Documentation Note -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4" id="insurance-note">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-shield-alt text-blue-600 text-xl mt-1"></i>
+                <div>
+                    <p class="font-bold text-blue-800">Insurance Documentation Ready</p>
+                    <p class="text-sm text-blue-700 mt-1">
+                        This report now captures ALL facility visitors for insurance reimbursement documentation.
+                        Day pass and punch card visitors are properly tracked and included in the total count.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning for Current View -->
+        <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4 hidden" id="insurance-warning">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl mt-1"></i>
+                <div>
+                    <p class="font-bold text-red-800">Insurance Documentation Gap</p>
+                    <p class="text-sm text-red-700 mt-1">
+                        <strong>Current report ONLY shows members.</strong> Day pass purchasers and punch card users are NOT tracked.
+                        This fails to meet insurance documentation requirements starting January 2026.
+                    </p>
+                    <p class="text-sm text-red-600 mt-2 font-medium">
+                        Missing from this report: 98 day pass visitors + 25 punch card visits = 123 undocumented facility entries
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleView(view) {
+            const isEnhanced = view === 'enhanced';
+
+            // Toggle buttons
+            document.getElementById('btn-enhanced').className = isEnhanced
+                ? 'px-3 py-1 bg-blue-600 text-white rounded text-sm'
+                : 'px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300';
+            document.getElementById('btn-current').className = !isEnhanced
+                ? 'px-3 py-1 bg-blue-600 text-white rounded text-sm'
+                : 'px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300';
+
+            // Toggle stats
+            document.getElementById('stats-enhanced').classList.toggle('hidden', !isEnhanced);
+            document.getElementById('stats-current').classList.toggle('hidden', isEnhanced);
+
+            // Toggle table
+            document.getElementById('table-enhanced').classList.toggle('hidden', !isEnhanced);
+            document.getElementById('table-current').classList.toggle('hidden', isEnhanced);
+
+            // Toggle notes
+            document.getElementById('insurance-note').classList.toggle('hidden', !isEnhanced);
+            document.getElementById('insurance-warning').classList.toggle('hidden', isEnhanced);
+
+            // Toggle visit type filter
+            document.getElementById('visit-type-filter').disabled = !isEnhanced;
+            document.getElementById('visit-type-filter').classList.toggle('opacity-50', !isEnhanced);
+
+            // Update count
+            document.getElementById('total-count').textContent = isEnhanced ? '847' : '724';
+        }
+    </script>
+</body>
+</html>
