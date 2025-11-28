@@ -42,6 +42,7 @@
             <p class="text-sm text-yellow-800 mb-2"><i class="fas fa-info-circle"></i> <strong>MOCKUP DEMO:</strong> Click scenarios to see different check-in states</p>
             <div class="flex flex-wrap gap-2">
                 <button onclick="showScenario('member')" class="scenario-btn px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm border border-green-300 hover:bg-green-200 active" id="btn-member">Active Member</button>
+                <button onclick="showScenario('temp-member')" class="scenario-btn px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm border border-yellow-300 hover:bg-yellow-200" id="btn-temp-member">Temporary Membership</button>
                 <button onclick="showScenario('services')" class="scenario-btn px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm border border-purple-300 hover:bg-purple-200" id="btn-services">Has Punch Cards</button>
                 <button onclick="showScenario('no-services')" class="scenario-btn px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm border border-orange-300 hover:bg-orange-200" id="btn-no-services">No Active Services</button>
                 <button onclick="showScenario('not-found')" class="scenario-btn px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm border border-red-300 hover:bg-red-200" id="btn-not-found">Person Not Found</button>
@@ -185,6 +186,94 @@
                                 <i class="fas fa-history w-6"></i>
                                 <span>View History</span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENARIO: Temporary Membership -->
+        <div id="scenario-temp-member" class="scenario-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Member Info Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Status Banner - Green with Expiration Warning -->
+                        <div class="bg-green-500 text-white px-6 py-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-check-circle text-2xl"></i>
+                                    <span class="text-lg font-bold">ACCESS GRANTED - Temporary Membership</span>
+                                </div>
+                            </div>
+                            <!-- Prominent Expiration Date -->
+                            <div class="mt-2 flex items-center gap-2 bg-green-600 rounded-lg px-4 py-2">
+                                <i class="fas fa-calendar-alt text-lg"></i>
+                                <span class="font-medium">Expires: December 15, 2025</span>
+                                <span class="ml-2 px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-bold rounded">18 DAYS LEFT</span>
+                            </div>
+                        </div>
+
+                        <!-- Member Details -->
+                        <div class="p-6">
+                            <div class="flex gap-6">
+                                <img src="https://placehold.co/120x120/e2e8f0/475569?text=LG"
+                                     class="w-28 h-28 rounded-lg object-cover border-2 border-gray-200">
+                                <div class="flex-1">
+                                    <h2 class="text-2xl font-bold text-gray-900">Lisa Garcia</h2>
+                                    <div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+                                        <div><span class="text-gray-500">Member ID:</span> <span class="font-medium">3456</span></div>
+                                        <div><span class="text-gray-500">DOB:</span> <span class="font-medium">03/22/1992 (33)</span></div>
+                                        <div><span class="text-gray-500">Phone:</span> <span class="font-medium">(555) 234-5678</span></div>
+                                        <div><span class="text-gray-500">Check-ins this month:</span> <span class="font-medium text-blue-600">8</span></div>
+                                    </div>
+
+                                    <!-- Temporary Membership Info -->
+                                    <div class="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-300">
+                                        <p class="text-sm font-medium text-yellow-800">
+                                            <i class="fas fa-clock mr-2"></i>30-Day Trial Membership
+                                        </p>
+                                        <p class="text-xs text-yellow-700 mt-1">Started: Nov 15, 2025 • Ends: Dec 15, 2025</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-bolt text-yellow-500"></i> Quick Actions
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="alert('Would open membership enrollment to convert trial to full membership...')" class="action-btn w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-left flex items-center gap-3 font-medium">
+                                <i class="fas fa-user-plus w-6"></i>
+                                <div>
+                                    <span class="block">Convert to Full Membership</span>
+                                    <span class="text-xs text-blue-200">Before trial expires</span>
+                                </div>
+                            </button>
+                            <button onclick="goToMainPOS()" class="action-btn w-full px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-left flex items-center gap-3 border border-blue-200">
+                                <i class="fas fa-cash-register w-6"></i>
+                                <span>POS - Sell Item</span>
+                            </button>
+                            <button onclick="alert('Edit Profile would open member profile editor...')" class="action-btn w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-left flex items-center gap-3 border border-gray-200">
+                                <i class="fas fa-user-edit w-6"></i>
+                                <span>Edit Profile</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Conversion Reminder -->
+                    <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                        <div class="flex gap-3">
+                            <i class="fas fa-lightbulb text-yellow-500 mt-1"></i>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-800">Trial Ending Soon</p>
+                                <p class="text-xs text-yellow-700 mt-1">Consider discussing full membership options with this guest before their trial expires.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
