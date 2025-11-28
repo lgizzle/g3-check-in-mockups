@@ -102,64 +102,9 @@
                                     <!-- Membership Info -->
                                     <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
                                         <p class="text-sm font-medium text-green-800">
-                                            <i class="fas fa-id-card mr-2"></i>Premium Membership - Monthly (Family Plan)
+                                            <i class="fas fa-id-card mr-2"></i>Premium Membership - Monthly
                                         </p>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Family Members Section -->
-                            <div class="mt-6">
-                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                                    <i class="fas fa-users text-blue-500"></i> Family Members on this Membership
-                                </h3>
-                                <div class="bg-blue-50 rounded-lg border border-blue-200 p-4">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-100">
-                                            <div class="flex items-center gap-3">
-                                                <img src="https://placehold.co/40x40/e2e8f0/475569?text=JD" class="w-10 h-10 rounded-full">
-                                                <div>
-                                                    <p class="font-medium text-gray-900">Jane Doe</p>
-                                                    <p class="text-xs text-gray-500">Spouse • ID: 1235</p>
-                                                </div>
-                                            </div>
-                                            <button onclick="alert('Would check in Jane Doe')" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
-                                                <i class="fas fa-user-check mr-1"></i>Check In
-                                            </button>
-                                        </div>
-                                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-100">
-                                            <div class="flex items-center gap-3">
-                                                <img src="https://placehold.co/40x40/e2e8f0/475569?text=TD" class="w-10 h-10 rounded-full">
-                                                <div>
-                                                    <p class="font-medium text-gray-900">Tommy Doe</p>
-                                                    <p class="text-xs text-gray-500">Child • ID: 1236</p>
-                                                </div>
-                                            </div>
-                                            <button onclick="alert('Would check in Tommy Doe')" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
-                                                <i class="fas fa-user-check mr-1"></i>Check In
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-blue-600 mt-3"><i class="fas fa-info-circle mr-1"></i>Each family member is tracked separately for check-ins</p>
-                                </div>
-                            </div>
-
-                            <!-- Active Services Section (Member + Services) -->
-                            <div class="mt-6">
-                                <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                                    <i class="fas fa-list-check text-purple-500"></i> Active Services
-                                </h3>
-                                <div id="service-member-training" class="p-4 bg-purple-50 rounded-lg border border-purple-200 flex items-center justify-between">
-                                    <div>
-                                        <p class="font-medium text-purple-900">Personal Training 10-Pack</p>
-                                        <p class="text-sm text-purple-600">
-                                            <span id="member-training-visits" class="font-bold text-lg">6</span> of 10 visits remaining
-                                        </p>
-                                        <p class="text-xs text-purple-500">Expires: 03/15/2026</p>
-                                    </div>
-                                    <button id="member-training-btn" onclick="showDeductModal('member-training', 'Personal Training 10-Pack')" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium action-btn">
-                                        <i class="fas fa-minus-circle mr-2"></i>Use 1 Visit
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -693,8 +638,7 @@
         // Service visit tracking
         const serviceData = {
             pickleball: { name: 'Pickleball 10-Pack', visits: 7, total: 10 },
-            training: { name: 'Personal Training 5-Pack', visits: 1, total: 5 },
-            'member-training': { name: 'Personal Training 10-Pack', visits: 6, total: 10 }
+            training: { name: 'Personal Training 5-Pack', visits: 1, total: 5 }
         };
         let currentServiceKey = '';
 

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 Day Pass Sale Flow - Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .step { transition: all 0.3s; }
+        .step.active { transform: scale(1.02); }
+        .step.completed { opacity: 0.7; }
+        .step.hidden { display: none !important; }
+        .step-indicator { transition: all 0.3s; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-4 px-6 shadow-lg">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://placehold.co/50x50/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
+                <div>
+                    <h1 class="text-xl font-bold">Day Pass Sale Flow</h1>
+                    <p class="text-blue-200 text-sm">Complete workflow mockup</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- A/B Test Toggle -->
+    <div class="bg-yellow-100 border-b border-yellow-300 py-3">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">A/B TEST</span>
+                    <span class="text-yellow-800 font-medium">After adding new person, what comes next?</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setABMode('A')" id="btn-mode-a" class="px-4 py-2 bg-yellow-500 text-white rounded-lg font-medium text-sm">
+                        Option A: Choice Screen
+                    </button>
+                    <button onclick="setABMode('B')" id="btn-mode-b" class="px-4 py-2 bg-white text-yellow-700 border border-yellow-400 rounded-lg font-medium text-sm hover:bg-yellow-50">
+                        Option B: Profile + Actions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="bg-white border-b shadow-sm py-4">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 step-indicator" id="step1-indicator">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold" id="step1-circle">1</div>
+                    <span class="text-sm font-medium text-blue-600" id="step1-text">Search</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"><div class="h-1 bg-blue-600 transition-all" id="progress1" style="width: 0%"></div></div>
+
+                <div class="flex items-center gap-2 step-indicator" id="step2-indicator">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold" id="step2-circle">2</div>
+                    <span class="text-sm font-medium text-gray-500" id="step2-text">Add Person</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"><div class="h-1 bg-blue-600 transition-all" id="progress2" style="width: 0%"></div></div>
+
+                <div class="flex items-center gap-2 step-indicator" id="step3-indicator">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold" id="step3-circle">3</div>
+                    <span class="text-sm font-medium text-gray-500" id="step3-text">Day Pass</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"><div class="h-1 bg-blue-600 transition-all" id="progress3" style="width: 0%"></div></div>
+
+                <div class="flex items-center gap-2 step-indicator" id="step4-indicator">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold" id="step4-circle">4</div>
+                    <span class="text-sm font-medium text-gray-500" id="step4-text">Payment</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"><div class="h-1 bg-blue-600 transition-all" id="progress4" style="width: 0%"></div></div>
+
+                <div class="flex items-center gap-2 step-indicator" id="step5-indicator">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold" id="step5-circle">5</div>
+                    <span class="text-sm font-medium text-gray-500" id="step5-text">Complete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto py-8 px-6">
+
+        <!-- STEP 1: Search - Not Found -->
+        <div id="step1" class="step active">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm">1</span>
+                    Search for Person
+                </h2>
+
+                <div class="flex gap-4 items-end mb-6">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Search Member</label>
+                        <div class="relative">
+                            <input type="text" value="Emily Chen"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg bg-gray-50"
+                                   readonly>
+                            <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <button class="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed">
+                        <i class="fas fa-user-check mr-2"></i> Check In
+                    </button>
+                </div>
+
+                <!-- Not Found Result -->
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-user-slash text-2xl text-red-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Person Not Found</h3>
+                    <p class="text-gray-600 mb-4">No results found for "Emily Chen"</p>
+                    <button onclick="goToStep(2)" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                        <i class="fas fa-user-plus mr-2"></i>Add New Person
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center text-gray-500">
+                <p class="text-sm"><i class="fas fa-info-circle mr-1"></i> Click "Add New Person" to continue the flow</p>
+            </div>
+        </div>
+
+        <!-- STEP 2: Add Person Form (Minimal) -->
+        <div id="step2" class="step hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 fade-in">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-white text-blue-600 flex items-center justify-center text-sm">2</span>
+                        Add New Person
+                    </h2>
+                    <p class="text-blue-100 text-sm mt-1">Minimal information required - can be updated later</p>
+                </div>
+
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-red-500">*</span></label>
+                            <input type="text" value="Emily" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-green-50 border-green-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-500">*</span></label>
+                            <input type="text" value="Chen" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-green-50 border-green-300">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth <span class="text-red-500">*</span></label>
+                            <input type="date" value="1992-03-15" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-green-50 border-green-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
+                            <input type="tel" value="(555) 234-5678" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-green-50 border-green-300">
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-gray-400">(optional)</span></label>
+                        <input type="email" placeholder="email@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Waiver Notice -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-file-signature text-yellow-600 mt-1"></i>
+                            <div>
+                                <p class="font-medium text-yellow-800">Waiver Required</p>
+                                <p class="text-sm text-yellow-700">Guest will need to sign liability waiver before entry. A QR code will be provided.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="goToStep(1)" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-arrow-left mr-2"></i>Back
+                        </button>
+                        <button onclick="goToStep('2b')" class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                            <i class="fas fa-check mr-2"></i>Add Person & Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-lightbulb mr-2"></i>
+                    <strong>Note:</strong> Person will be added to system. Next screen depends on A/B test selection above.
+                </p>
+            </div>
+        </div>
+
+        <!-- STEP 2B: Decision Point (A/B Test) -->
+        <div id="step2b" class="step hidden">
+
+            <!-- OPTION A: Choice Screen -->
+            <div id="option-a" class="fade-in">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                    <div class="bg-green-600 text-white px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-check text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-green-100 text-sm">Person Added Successfully</p>
+                                <h2 class="text-lg font-bold">Emily Chen</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">What would you like to do?</h3>
+
+                        <div class="grid grid-cols-1 gap-4 mb-6">
+                            <button onclick="goToStep(3)" class="p-5 border-2 border-green-500 bg-green-50 rounded-lg text-left hover:bg-green-100 transition-colors flex items-center gap-4">
+                                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-ticket-alt text-2xl text-green-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-lg">Sell Day Pass</p>
+                                    <p class="text-sm text-gray-600">Single-day facility access - $15-$25</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-green-500"></i>
+                            </button>
+
+                            <button onclick="goToStep('service')" class="p-5 border-2 border-purple-300 rounded-lg text-left hover:border-purple-500 hover:bg-purple-50 transition-colors flex items-center gap-4">
+                                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-layer-group text-2xl text-purple-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-lg">Sell Service Package</p>
+                                    <p class="text-sm text-gray-600">Pickleball packs, training sessions, etc.</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-purple-400"></i>
+                            </button>
+
+                            <button onclick="goToStep('membership')" class="p-5 border-2 border-blue-300 rounded-lg text-left hover:border-blue-500 hover:bg-blue-50 transition-colors flex items-center gap-4">
+                                <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-id-card text-2xl text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900 text-lg">Start Membership</p>
+                                    <p class="text-sm text-gray-600">Full membership enrollment</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-blue-400"></i>
+                            </button>
+                        </div>
+
+                        <button onclick="goToStep(1)" class="w-full px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Search
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-flask mr-2"></i>
+                        <strong>Option A:</strong> Explicit choice screen - staff picks the next action from clear options.
+                    </p>
+                </div>
+            </div>
+
+            <!-- OPTION B: Profile with Quick Actions -->
+            <div id="option-b" class="hidden fade-in">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                    <div class="bg-blue-600 text-white px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-2xl text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-blue-100 text-sm">NEW PERSON ADDED</p>
+                                <h2 class="text-xl font-bold">Emily Chen</h2>
+                                <p class="text-blue-200 text-sm">Not yet checked in</p>
+                            </div>
+                            <div class="ml-auto">
+                                <span class="px-3 py-1 bg-blue-500 text-white rounded-full text-sm font-medium">
+                                    <i class="fas fa-plus mr-1"></i>New
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <!-- Person Details -->
+                        <div class="grid grid-cols-3 gap-4 mb-6 text-sm">
+                            <div>
+                                <p class="text-gray-500">ID</p>
+                                <p class="font-medium">9876</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Phone</p>
+                                <p class="font-medium">(555) 234-5678</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">DOB</p>
+                                <p class="font-medium">03/15/1992 (33)</p>
+                            </div>
+                        </div>
+
+                        <!-- Waiver Status -->
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-file-signature text-yellow-600"></i>
+                                <p class="text-sm text-yellow-800">Waiver not signed - QR code will be provided after purchase</p>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <h3 class="font-medium text-gray-700 mb-3"><i class="fas fa-bolt mr-2"></i>What would you like to do?</h3>
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <button onclick="goToStep(3)" class="p-4 border-2 border-green-500 bg-green-50 rounded-lg text-left hover:bg-green-100 transition-colors">
+                                <i class="fas fa-ticket-alt text-2xl text-green-600 mb-2"></i>
+                                <p class="font-medium text-gray-800">Sell Day Pass</p>
+                                <p class="text-xs text-gray-500">$15-$25 single day</p>
+                            </button>
+                            <button onclick="goToStep('service')" class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-purple-300 hover:bg-purple-50 transition-colors">
+                                <i class="fas fa-layer-group text-2xl text-purple-600 mb-2"></i>
+                                <p class="font-medium text-gray-800">Sell Service Package</p>
+                                <p class="text-xs text-gray-500">Pickleball, training, etc.</p>
+                            </button>
+                            <button onclick="goToStep('membership')" class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-blue-300 hover:bg-blue-50 transition-colors">
+                                <i class="fas fa-id-card text-2xl text-blue-600 mb-2"></i>
+                                <p class="font-medium text-gray-800">Start Membership</p>
+                                <p class="text-xs text-gray-500">Full enrollment</p>
+                            </button>
+                            <button onclick="goToStep('pos')" class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-gray-400 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-shopping-cart text-2xl text-gray-500 mb-2"></i>
+                                <p class="font-medium text-gray-800">POS Only</p>
+                                <p class="text-xs text-gray-500">Café, merchandise</p>
+                            </button>
+                        </div>
+
+                        <button onclick="goToStep(1)" class="w-full px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Search
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-flask mr-2"></i>
+                        <strong>Option B:</strong> Profile view with quick actions - mirrors the check-in screen pattern.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Day Pass Selection -->
+        <div id="step3" class="step hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 fade-in">
+                <div class="bg-green-600 text-white px-6 py-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-white text-green-600 flex items-center justify-center text-sm">3</span>
+                        Sell Day Pass
+                    </h2>
+                    <p class="text-green-100 text-sm mt-1">Select day pass type</p>
+                </div>
+
+                <div class="p-6">
+                    <!-- Person Summary -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900">Emily Chen</p>
+                            <p class="text-sm text-gray-600">New person added to system</p>
+                        </div>
+                        <div class="ml-auto">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                <i class="fas fa-check mr-1"></i>Ready
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Day Pass Options -->
+                    <h3 class="font-medium text-gray-700 mb-3">Select Day Pass</h3>
+                    <div class="space-y-3 mb-6">
+                        <label class="block">
+                            <input type="radio" name="daypass" class="hidden peer" checked>
+                            <div class="p-4 border-2 border-green-500 bg-green-50 rounded-lg cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-green-300 flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-gray-900">Standard Day Pass</p>
+                                    <p class="text-sm text-gray-600">Full facility access for today</p>
+                                </div>
+                                <p class="text-2xl font-bold text-green-600">$15.00</p>
+                            </div>
+                        </label>
+
+                        <label class="block">
+                            <input type="radio" name="daypass" class="hidden peer">
+                            <div class="p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-gray-300 flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-gray-900">Premium Day Pass</p>
+                                    <p class="text-sm text-gray-600">Includes locker + towel service</p>
+                                </div>
+                                <p class="text-2xl font-bold text-gray-700">$25.00</p>
+                            </div>
+                        </label>
+
+                        <label class="block">
+                            <input type="radio" name="daypass" class="hidden peer">
+                            <div class="p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-gray-300 flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-gray-900">Pickleball Day Pass</p>
+                                    <p class="text-sm text-gray-600">Court access + equipment rental</p>
+                                </div>
+                                <p class="text-2xl font-bold text-gray-700">$20.00</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="goToStep('2b')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-arrow-left mr-2"></i>Back
+                        </button>
+                        <button onclick="goToStep(4)" class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                            Continue to Payment <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Payment -->
+        <div id="step4" class="step hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 fade-in">
+                <div class="bg-purple-600 text-white px-6 py-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-white text-purple-600 flex items-center justify-center text-sm">4</span>
+                        Payment
+                    </h2>
+                </div>
+
+                <div class="p-6">
+                    <!-- Order Summary -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <h3 class="font-medium text-gray-700 mb-3">Order Summary</h3>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                            <div>
+                                <p class="font-medium">Standard Day Pass</p>
+                                <p class="text-sm text-gray-500">Emily Chen</p>
+                            </div>
+                            <p class="font-medium">$15.00</p>
+                        </div>
+                        <div class="flex justify-between items-center py-3 font-bold text-lg">
+                            <span>Total</span>
+                            <span class="text-green-600">$15.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <h3 class="font-medium text-gray-700 mb-3">Payment Method</h3>
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <button class="p-4 border-2 border-green-500 bg-green-50 rounded-lg text-center hover:bg-green-100 transition-colors" id="pay-cash">
+                            <i class="fas fa-money-bill-wave text-3xl text-green-600 mb-2"></i>
+                            <p class="font-medium text-green-800">Cash</p>
+                        </button>
+                        <button class="p-4 border-2 border-gray-200 rounded-lg text-center hover:border-blue-300 hover:bg-blue-50 transition-colors" id="pay-card">
+                            <i class="fas fa-credit-card text-3xl text-gray-400 mb-2"></i>
+                            <p class="font-medium text-gray-600">Card</p>
+                        </button>
+                        <button class="p-4 border-2 border-gray-200 rounded-lg text-center hover:border-purple-300 hover:bg-purple-50 transition-colors" id="pay-house">
+                            <i class="fas fa-building text-3xl text-gray-400 mb-2"></i>
+                            <p class="font-medium text-gray-600">House Charge</p>
+                            <p class="text-xs text-gray-400">Not available</p>
+                        </button>
+                    </div>
+
+                    <!-- Cash Payment Details -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-center gap-3 mb-3">
+                            <i class="fas fa-money-bill-wave text-green-600 text-xl"></i>
+                            <span class="font-medium text-green-800">Cash Payment</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Amount Received</label>
+                                <input type="text" value="$20.00" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-lg font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Change Due</label>
+                                <div class="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-lg text-lg font-bold text-yellow-800">
+                                    $5.00
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="goToStep(3)" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-arrow-left mr-2"></i>Back
+                        </button>
+                        <button onclick="goToStep(5)" class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-lg">
+                            <i class="fas fa-check mr-2"></i>Complete Sale & Check In
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <strong>Auto Check-In:</strong> After payment, Emily will be automatically checked in and recorded in the check-in report.
+                </p>
+            </div>
+        </div>
+
+        <!-- STEP 5: Complete -->
+        <div id="step5" class="step hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 fade-in">
+                <!-- Success Banner -->
+                <div class="bg-green-500 text-white px-6 py-8 text-center">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check text-4xl text-green-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2">Sale Complete!</h2>
+                    <p class="text-green-100">Emily Chen is checked in</p>
+                </div>
+
+                <div class="p-6">
+                    <!-- Receipt Summary -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-600">Receipt #</span>
+                            <span class="font-mono font-medium">INV-2025-1127-0042</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-600">Guest</span>
+                            <span class="font-medium">Emily Chen</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-600">Item</span>
+                            <span class="font-medium">Standard Day Pass</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-600">Payment</span>
+                            <span class="font-medium">Cash - $20.00 (Change: $5.00)</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+                            <span class="font-bold">Total Paid</span>
+                            <span class="font-bold text-green-600 text-lg">$15.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Check-In Confirmation -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-check text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-green-800">Checked In Successfully</p>
+                                <p class="text-sm text-green-600">Nov 27, 2025 at 10:52 AM - Main Location</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Waiver Reminder -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1"></i>
+                            <div>
+                                <p class="font-medium text-yellow-800">Waiver Still Needed</p>
+                                <p class="text-sm text-yellow-700">Hand guest this QR code to sign waiver on their phone</p>
+                                <div class="mt-2 bg-white p-2 inline-block rounded">
+                                    <img src="https://placehold.co/80x80/000000/ffffff?text=QR" alt="QR Code" class="w-20 h-20">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex gap-3">
+                        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-print mr-2"></i>Print Receipt
+                        </button>
+                        <button class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200">
+                            <i class="fas fa-envelope mr-2"></i>Email Receipt
+                        </button>
+                        <button onclick="goToStep(6)" class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Check-In
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Click Count -->
+            <div class="bg-blue-900 text-white rounded-lg p-4 text-center">
+                <p class="text-sm text-blue-200 mb-1">Total Workflow</p>
+                <p class="text-2xl font-bold">5-6 Clicks</p>
+                <p class="text-sm text-blue-300 mt-1">From "person not found" to "checked in with day pass"</p>
+            </div>
+        </div>
+
+        <!-- STEP 6: Back to Check-In (Shows person is now checked in with upsell options) -->
+        <div id="step6" class="step hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 fade-in">
+                <!-- Checked In Banner -->
+                <div class="bg-green-500 text-white px-6 py-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-check text-2xl text-green-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-green-100 text-sm">CHECKED IN</p>
+                            <h2 class="text-xl font-bold">Emily Chen</h2>
+                            <p class="text-green-100 text-sm">Day Pass - Valid Today Only</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="text-green-100 text-sm">Checked in at</p>
+                            <p class="font-bold">10:52 AM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- Person Details -->
+                    <div class="grid grid-cols-3 gap-4 mb-6 text-sm">
+                        <div>
+                            <p class="text-gray-500">ID</p>
+                            <p class="font-medium">9876</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Phone</p>
+                            <p class="font-medium">(555) 234-5678</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">DOB</p>
+                            <p class="font-medium">03/15/1992 (33)</p>
+                        </div>
+                    </div>
+
+                    <!-- Active Today -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <h3 class="font-medium text-green-800 mb-2"><i class="fas fa-ticket-alt mr-2"></i>Active Today</h3>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-gray-900">Standard Day Pass</p>
+                                <p class="text-sm text-gray-600">Purchased just now - $15.00</p>
+                            </div>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                <i class="fas fa-check mr-1"></i>Active
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions - Upsell Opportunities -->
+                    <h3 class="font-medium text-gray-700 mb-3"><i class="fas fa-bolt mr-2"></i>Quick Actions</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-blue-300 hover:bg-blue-50 transition-colors">
+                            <i class="fas fa-shopping-cart text-2xl text-blue-600 mb-2"></i>
+                            <p class="font-medium text-gray-800">POS - Sell Item</p>
+                            <p class="text-xs text-gray-500">Café, merchandise, etc.</p>
+                        </button>
+                        <button class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-purple-300 hover:bg-purple-50 transition-colors">
+                            <i class="fas fa-ticket-alt text-2xl text-purple-600 mb-2"></i>
+                            <p class="font-medium text-gray-800">Sell Service Package</p>
+                            <p class="text-xs text-gray-500">Punch cards, training packs</p>
+                        </button>
+                        <button class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-green-300 hover:bg-green-50 transition-colors">
+                            <i class="fas fa-id-card text-2xl text-green-600 mb-2"></i>
+                            <p class="font-medium text-gray-800">Convert to Member</p>
+                            <p class="text-xs text-gray-500">Start membership signup</p>
+                        </button>
+                        <button class="p-4 border-2 border-gray-200 rounded-lg text-left hover:border-gray-400 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-user-edit text-2xl text-gray-600 mb-2"></i>
+                            <p class="font-medium text-gray-800">Edit Profile</p>
+                            <p class="text-xs text-gray-500">Update contact info</p>
+                        </button>
+                    </div>
+
+                    <!-- Waiver Reminder (if still needed) -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-yellow-800">Waiver pending - remind guest to sign</p>
+                            </div>
+                            <img src="https://placehold.co/50x50/000000/ffffff?text=QR" alt="QR Code" class="w-12 h-12 rounded">
+                        </div>
+                    </div>
+
+                    <!-- New Check-In Button -->
+                    <button onclick="resetFlow()" class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                        <i class="fas fa-search mr-2"></i>New Check-In Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workflow Note -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-lightbulb mr-2"></i>
+                    <strong>Upsell Opportunity:</strong> Guest is here for the day - perfect time to introduce service packages or membership options!
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Navigation Help -->
+    <div class="fixed bottom-6 right-6 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm">
+        <i class="fas fa-keyboard mr-2"></i> Press <kbd class="bg-gray-600 px-2 py-0.5 rounded">→</kbd> for next step
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let abMode = 'A'; // Default to Option A
+
+        function setABMode(mode) {
+            abMode = mode;
+            // Update button styles
+            const btnA = document.getElementById('btn-mode-a');
+            const btnB = document.getElementById('btn-mode-b');
+
+            if (mode === 'A') {
+                btnA.className = 'px-4 py-2 bg-yellow-500 text-white rounded-lg font-medium text-sm';
+                btnB.className = 'px-4 py-2 bg-white text-yellow-700 border border-yellow-400 rounded-lg font-medium text-sm hover:bg-yellow-50';
+                document.getElementById('option-a').classList.remove('hidden');
+                document.getElementById('option-b').classList.add('hidden');
+            } else {
+                btnB.className = 'px-4 py-2 bg-yellow-500 text-white rounded-lg font-medium text-sm';
+                btnA.className = 'px-4 py-2 bg-white text-yellow-700 border border-yellow-400 rounded-lg font-medium text-sm hover:bg-yellow-50';
+                document.getElementById('option-b').classList.remove('hidden');
+                document.getElementById('option-a').classList.add('hidden');
+            }
+        }
+
+        function goToStep(step) {
+            // Handle special steps that show alerts (placeholders)
+            if (step === 'service') {
+                alert('Service Package flow would open here.\n\nThis would show:\n• Pickleball 10-Pack ($180)\n• Personal Training 5-Pack ($400)\n• Group Fitness 10-Pack ($120)\n• etc.\n\nThen proceed to payment.');
+                return;
+            }
+            if (step === 'membership') {
+                alert('Membership enrollment flow would open here.\n\nThis would show:\n• Membership plans\n• Payment options\n• Contract terms\n• etc.');
+                return;
+            }
+            if (step === 'pos') {
+                alert('POS / Café sale flow would open here.\n\nThis would show:\n• Café items (coffee, snacks)\n• Merchandise (shirts, gear)\n• Quick checkout\n• No check-in required');
+                return;
+            }
+
+            // Hide current step
+            const currentEl = document.getElementById('step' + currentStep);
+            if (currentEl) {
+                currentEl.classList.add('hidden');
+                currentEl.classList.remove('active');
+            }
+
+            // Show new step
+            const newEl = document.getElementById('step' + step);
+            if (newEl) {
+                newEl.classList.remove('hidden');
+                newEl.classList.add('active');
+            }
+
+            // Update progress indicators (only for numeric steps 1-5)
+            const numericStep = typeof step === 'number' ? step : (step === '2b' ? 2.5 : parseInt(step) || 0);
+
+            for (let i = 1; i <= 5; i++) {
+                const circle = document.getElementById('step' + i + '-circle');
+                const text = document.getElementById('step' + i + '-text');
+
+                if (!circle || !text) continue;
+
+                if (i < numericStep) {
+                    // Completed
+                    circle.className = 'w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold';
+                    circle.innerHTML = '<i class="fas fa-check"></i>';
+                    text.className = 'text-sm font-medium text-green-600';
+                } else if (i === Math.ceil(numericStep)) {
+                    // Current
+                    circle.className = 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold';
+                    circle.innerHTML = i;
+                    text.className = 'text-sm font-medium text-blue-600';
+                } else {
+                    // Future
+                    circle.className = 'w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold';
+                    circle.innerHTML = i;
+                    text.className = 'text-sm font-medium text-gray-500';
+                }
+
+                // Update progress bars (only 4 progress bars exist, between steps)
+                if (i < 5) {
+                    const progressBar = document.getElementById('progress' + i);
+                    if (progressBar) {
+                        progressBar.style.width = i < numericStep ? '100%' : '0%';
+                    }
+                }
+            }
+
+            currentStep = step;
+        }
+
+        function resetFlow() {
+            goToStep(1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && typeof currentStep === 'number' && currentStep < 6) {
+                goToStep(currentStep + 1);
+            } else if (e.key === 'ArrowLeft' && typeof currentStep === 'number' && currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        });
+    </script>
+</body>
+</html>
