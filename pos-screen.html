@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 POS - Touch Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tile-btn { transition: all 0.15s; }
+        .tile-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .tile-btn:active { transform: scale(0.97); }
+        .order-item { animation: slideIn 0.2s ease; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .breadcrumb-item { transition: color 0.15s; }
+        .breadcrumb-item:hover { color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-3 px-6 shadow-lg">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://placehold.co/50x50/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
+                <div>
+                    <h1 class="text-xl font-bold">G3 Sports & Fitness</h1>
+                    <p class="text-blue-200 text-sm">Point of Sale</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-right">
+                    <p class="text-sm text-blue-200">Customer:</p>
+                    <p class="font-medium" id="customerName">Walk-in Customer</p>
+                </div>
+                <button onclick="goBackToCheckin()" class="px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-lg text-sm flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Check-In
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden">
+        <!-- Left Side - Navigation Tiles -->
+        <div class="flex-1 p-6 flex flex-col overflow-hidden">
+            <!-- Breadcrumb Navigation -->
+            <div class="flex items-center gap-2 mb-4 text-sm">
+                <button onclick="navigateTo('main')" class="breadcrumb-item text-gray-500 hover:text-blue-600 flex items-center gap-1">
+                    <i class="fas fa-home"></i>
+                    <span>Main</span>
+                </button>
+                <div id="breadcrumb-trail"></div>
+            </div>
+
+            <!-- Back Button + Title -->
+            <div class="flex items-center gap-4 mb-4">
+                <button id="backBtn" onclick="goBack()" class="hidden px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </button>
+                <h2 class="text-2xl font-bold text-gray-800" id="categoryTitle">Main Menu</h2>
+            </div>
+
+            <!-- Tile Grid (3x3 max) -->
+            <div class="flex-1 overflow-auto">
+                <div class="grid grid-cols-3 gap-4" id="tileGrid">
+                    <!-- Tiles rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Order Panel -->
+        <div class="w-96 bg-white border-l border-gray-200 flex flex-col shadow-lg">
+            <!-- Order Header -->
+            <div class="p-4 border-b border-gray-200 bg-gray-50">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                    Current Order
+                </h3>
+            </div>
+
+            <!-- Order Items -->
+            <div class="flex-1 overflow-auto p-4" id="orderItems">
+                <div class="text-center text-gray-400 py-8">
+                    <i class="fas fa-shopping-basket text-4xl mb-3"></i>
+                    <p>No items yet</p>
+                    <p class="text-sm">Tap items to add</p>
+                </div>
+            </div>
+
+            <!-- Order Footer -->
+            <div class="p-4 border-t border-gray-200 bg-gray-50">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-medium text-gray-600">Total</span>
+                    <span class="text-2xl font-bold text-green-600" id="orderTotal">$0.00</span>
+                </div>
+                <button id="checkoutBtn" onclick="checkout()" disabled class="w-full py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg text-lg transition-colors flex items-center justify-center gap-2">
+                    <i class="fas fa-cash-register"></i>
+                    Complete Sale
+                </button>
+                <button onclick="clearOrder()" class="w-full mt-2 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium">
+                    <i class="fas fa-trash-alt mr-1"></i>
+                    Clear Order
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Toast -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 flex items-center gap-2">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Item added!</span>
+    </div>
+
+    <script>
+        // ============================================
+        // MENU DATA - Based on actual G3 sales data
+        // ============================================
+        const menuData = {
+            main: {
+                title: 'Main Menu',
+                parent: null,
+                items: [
+                    { id: 'favorites', name: 'Favorites', icon: 'fa-star', color: 'yellow', type: 'category' },
+                    { id: 'services', name: 'Services', icon: 'fa-clipboard-list', color: 'purple', type: 'category' },
+                    { id: 'products', name: 'Products', icon: 'fa-shopping-bag', color: 'green', type: 'category' }
+                ]
+            },
+
+            // ============================================
+            // FAVORITES - Top 9 sellers for quick access
+            // ============================================
+            favorites: {
+                title: 'Favorites',
+                parent: 'main',
+                items: [
+                    { id: 'fav_daypass', name: 'Day Pass', icon: 'fa-ticket', price: 10.00, color: 'green' },
+                    { id: 'fav_opengym', name: 'Open Gym', icon: 'fa-basketball', price: 5.00, color: 'orange' },
+                    { id: 'fav_smoothie', name: 'Smoothie 16oz', icon: 'fa-blender', price: 5.00, color: 'pink' },
+                    { id: 'fav_gatorade', name: 'Gatorade', icon: 'fa-droplet', price: 3.00, color: 'green' },
+                    { id: 'fav_muffin', name: 'Muffin', icon: 'fa-cookie', price: 3.00, color: 'amber' },
+                    { id: 'fav_coffee', name: 'Coffee', icon: 'fa-mug-hot', price: 2.00, color: 'amber' },
+                    { id: 'fav_water', name: 'Bottled Water', icon: 'fa-bottle-water', price: 1.00, color: 'blue' },
+                    { id: 'fav_redbull', name: 'RedBull', icon: 'fa-bolt', price: 3.00, color: 'blue' },
+                    { id: 'fav_alani', name: 'Alani Energy', icon: 'fa-bolt', price: 3.00, color: 'pink' }
+                ]
+            },
+
+            // ============================================
+            // SERVICES
+            // ============================================
+            services: {
+                title: 'Services',
+                parent: 'main',
+                items: [
+                    { id: 'day_passes', name: 'Day Passes', icon: 'fa-ticket', color: 'green', type: 'category' },
+                    { id: 'open_gym', name: 'Open Gym', icon: 'fa-basketball', color: 'orange', type: 'category' },
+                    { id: 'reservations', name: 'Reservations', icon: 'fa-calendar-check', color: 'blue', type: 'category' },
+                    { id: 'personal_training', name: 'Personal Training', icon: 'fa-dumbbell', color: 'purple', type: 'category' },
+                    { id: 'misc_services', name: 'Miscellaneous', icon: 'fa-ellipsis', color: 'gray', type: 'category' }
+                ]
+            },
+
+            // Day Passes
+            day_passes: {
+                title: 'Day Passes',
+                parent: 'services',
+                items: [
+                    { id: 'dp_single', name: 'Day Pass', icon: 'fa-ticket', price: 10.00, color: 'green' },
+                    { id: 'dp_10pack', name: 'Day Pass 10+1', icon: 'fa-layer-group', price: 100.00, color: 'green', desc: '11 visits for $100' },
+                    { id: 'dp_free', name: 'Free Day Pass', icon: 'fa-gift', price: 0.00, color: 'teal', desc: 'Comp/Promo' }
+                ]
+            },
+
+            // Open Gym
+            open_gym: {
+                title: 'Open Gym',
+                parent: 'services',
+                items: [
+                    { id: 'og_single', name: 'Open Gym', icon: 'fa-basketball', price: 5.00, color: 'orange' }
+                ]
+            },
+
+            // Reservations
+            reservations: {
+                title: 'Reservations',
+                parent: 'services',
+                items: [
+                    { id: 'batting_cages', name: 'Batting Cages', icon: 'fa-baseball', color: 'green', type: 'category' },
+                    { id: 'beach_courts', name: 'Beach Courts', icon: 'fa-volleyball', color: 'amber', type: 'category' },
+                    { id: 'basketball', name: 'Basketball', icon: 'fa-basketball', color: 'orange', type: 'category' },
+                    { id: 'pro_turf', name: 'Pro Turf', icon: 'fa-futbol', color: 'green', type: 'category' }
+                ]
+            },
+
+            // Batting Cages
+            batting_cages: {
+                title: 'Batting Cages',
+                parent: 'reservations',
+                items: [
+                    { id: 'bc_30_member', name: '30min (Member)', icon: 'fa-baseball', price: 10.00, color: 'green' },
+                    { id: 'bc_30_nonmem', name: '30min (Non-Member)', icon: 'fa-baseball', price: 20.00, color: 'orange' },
+                    { id: 'bc_60_member', name: '1hr (Member)', icon: 'fa-baseball', price: 20.00, color: 'green' },
+                    { id: 'bc_60_nonmem', name: '1hr (Non-Member)', icon: 'fa-baseball', price: 30.00, color: 'orange' }
+                ]
+            },
+
+            // Beach Courts
+            beach_courts: {
+                title: 'Beach Courts',
+                parent: 'reservations',
+                items: [
+                    { id: 'beach_1hr', name: 'Beach Court 1hr', icon: 'fa-volleyball', price: 15.00, color: 'amber' }
+                ]
+            },
+
+            // Basketball
+            basketball: {
+                title: 'Basketball',
+                parent: 'reservations',
+                items: [
+                    { id: 'bball_peak', name: 'Court 1hr (Peak)', icon: 'fa-basketball', price: 50.00, color: 'orange' }
+                ]
+            },
+
+            // Pro Turf
+            pro_turf: {
+                title: 'Pro Turf',
+                parent: 'reservations',
+                items: [
+                    { id: 'turf_1hr', name: 'Pro Turf 1hr', icon: 'fa-futbol', price: 75.00, color: 'green' }
+                ]
+            },
+
+            // Personal Training
+            personal_training: {
+                title: 'Personal Training',
+                parent: 'services',
+                items: [
+                    { id: 'pt_single_60', name: 'Single Session 60min', icon: 'fa-dumbbell', price: 75.00, color: 'purple' },
+                    { id: 'pt_payment', name: 'PT Payment Plan', icon: 'fa-credit-card', price: 0.00, color: 'purple', desc: 'Enter amount' },
+                    { id: 'pt_hybrid_silver', name: 'Hybrid PT Silver', icon: 'fa-medal', price: 0.00, color: 'gray', desc: 'Package' },
+                    { id: 'pt_hybrid_gold', name: 'Hybrid PT Gold', icon: 'fa-medal', price: 784.00, color: 'amber', desc: '3-Month' }
+                ]
+            },
+
+            // Misc Services
+            misc_services: {
+                title: 'Miscellaneous',
+                parent: 'services',
+                items: [
+                    { id: 'towel', name: 'Towel Rental', icon: 'fa-bath', price: 0.50, color: 'blue' },
+                    { id: 'gate_fee', name: 'Gate Fee', icon: 'fa-door-open', price: 5.00, color: 'gray', desc: 'Tournament' }
+                ]
+            },
+
+            // ============================================
+            // PRODUCTS
+            // ============================================
+            products: {
+                title: 'Products',
+                parent: 'main',
+                items: [
+                    { id: 'beverages', name: 'Beverages', icon: 'fa-bottle-water', color: 'blue', type: 'category' },
+                    { id: 'barista', name: 'Barista', icon: 'fa-mug-hot', color: 'amber', type: 'category' },
+                    { id: 'food_bakery', name: 'Bakery', icon: 'fa-bread-slice', color: 'orange', type: 'category' },
+                    { id: 'food_bars', name: 'Bars', icon: 'fa-cookie-bite', color: 'amber', type: 'category' },
+                    { id: 'food_snacks', name: 'Snacks', icon: 'fa-candy-cane', color: 'red', type: 'category' },
+                    { id: 'food_deli', name: 'Deli', icon: 'fa-cheese', color: 'yellow', type: 'category' }
+                ]
+            },
+
+            // Beverages
+            beverages: {
+                title: 'Beverages',
+                parent: 'products',
+                items: [
+                    { id: 'energy_drinks', name: 'Energy Drinks', icon: 'fa-bolt', color: 'yellow', type: 'category' },
+                    { id: 'sports_drinks', name: 'Sports Drinks', icon: 'fa-droplet', color: 'green', type: 'category' },
+                    { id: 'protein_drinks', name: 'Protein', icon: 'fa-dumbbell', color: 'pink', type: 'category' },
+                    { id: 'bev_water', name: 'Bottled Water', icon: 'fa-bottle-water', price: 1.00, color: 'blue' },
+                    { id: 'bev_starbucks', name: 'Starbucks Coffee', icon: 'fa-mug-saucer', price: 3.00, color: 'green' }
+                ]
+            },
+
+            // Energy Drinks
+            energy_drinks: {
+                title: 'Energy Drinks',
+                parent: 'beverages',
+                items: [
+                    { id: 'redbull', name: 'RedBull', icon: 'fa-bolt', price: 3.00, color: 'blue' },
+                    { id: 'alani', name: 'Alani Energy', icon: 'fa-bolt', price: 3.00, color: 'pink' },
+                    { id: 'celsius', name: 'CELSIUS', icon: 'fa-bolt', price: 3.00, color: 'orange' },
+                    { id: 'prime', name: 'PRIME', icon: 'fa-bolt', price: 3.00, color: 'blue' },
+                    { id: 'amino', name: 'Amino Energy', icon: 'fa-bolt', price: 3.00, color: 'green' }
+                ]
+            },
+
+            // Sports Drinks
+            sports_drinks: {
+                title: 'Sports Drinks',
+                parent: 'beverages',
+                items: [
+                    { id: 'gatorade', name: 'Gatorade', icon: 'fa-droplet', price: 3.00, color: 'green' }
+                ]
+            },
+
+            // Protein Drinks
+            protein_drinks: {
+                title: 'Protein',
+                parent: 'beverages',
+                items: [
+                    { id: 'fairlife', name: 'Fairlife Shake', icon: 'fa-glass', price: 3.00, color: 'pink' },
+                    { id: 'protein_scoop', name: 'Protein Scoop', icon: 'fa-spoon', price: 2.00, color: 'pink' }
+                ]
+            },
+
+            // Barista
+            barista: {
+                title: 'Barista',
+                parent: 'products',
+                items: [
+                    { id: 'coffee', name: 'Coffee', icon: 'fa-mug-hot', price: 2.00, color: 'amber' },
+                    { id: 'coffee_refill', name: 'Coffee Refill', icon: 'fa-mug-hot', price: 1.00, color: 'amber' },
+                    { id: 'smoothie', name: 'Smoothie 16oz', icon: 'fa-blender', price: 5.00, color: 'pink' },
+                    { id: 'italian_soda', name: 'Italian Soda 16oz', icon: 'fa-glass', price: 3.00, color: 'red' },
+                    { id: 'tea', name: 'Tea 16oz', icon: 'fa-mug-hot', price: 2.00, color: 'green' },
+                    { id: 'cup_water', name: 'Cup of Water', icon: 'fa-glass-water', price: 0.00, color: 'blue' }
+                ]
+            },
+
+            // Bakery
+            food_bakery: {
+                title: 'Bakery',
+                parent: 'products',
+                items: [
+                    { id: 'muffin', name: 'Muffin', icon: 'fa-cookie', price: 3.00, color: 'amber' },
+                    { id: 'bagel', name: 'Bagel', icon: 'fa-circle', price: 3.00, color: 'amber' }
+                ]
+            },
+
+            // Bars
+            food_bars: {
+                title: 'Bars',
+                parent: 'products',
+                items: [
+                    { id: 'gatorade_bar', name: 'Gatorade Bar', icon: 'fa-cookie-bite', price: 3.00, color: 'green' },
+                    { id: 'kind_bar', name: 'KIND Bar', icon: 'fa-cookie-bite', price: 2.00, color: 'amber' }
+                ]
+            },
+
+            // Snacks
+            food_snacks: {
+                title: 'Snacks',
+                parent: 'products',
+                items: [
+                    { id: 'snickers', name: 'Snickers', icon: 'fa-candy-cane', price: 2.00, color: 'amber' }
+                ]
+            },
+
+            // Deli
+            food_deli: {
+                title: 'Deli',
+                parent: 'products',
+                items: [
+                    { id: 'cream_cheese', name: 'Cream Cheese', icon: 'fa-cheese', price: 0.50, color: 'yellow' },
+                    { id: 'greek_yogurt', name: 'Greek Yogurt', icon: 'fa-bowl-food', price: 3.00, color: 'pink' }
+                ]
+            }
+        };
+
+        // ============================================
+        // STATE
+        // ============================================
+        let currentView = 'main';
+        let navigationHistory = ['main'];
+        let order = [];
+
+        // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        const tileGrid = document.getElementById('tileGrid');
+        const categoryTitle = document.getElementById('categoryTitle');
+        const breadcrumbTrail = document.getElementById('breadcrumb-trail');
+        const backBtn = document.getElementById('backBtn');
+        const orderItems = document.getElementById('orderItems');
+        const orderTotal = document.getElementById('orderTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        // ============================================
+        // COLOR MAPPING
+        // ============================================
+        const colorClasses = {
+            yellow: { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-700', icon: 'text-yellow-500' },
+            purple: { bg: 'bg-purple-100', border: 'border-purple-300', text: 'text-purple-700', icon: 'text-purple-500' },
+            green: { bg: 'bg-green-100', border: 'border-green-300', text: 'text-green-700', icon: 'text-green-500' },
+            blue: { bg: 'bg-blue-100', border: 'border-blue-300', text: 'text-blue-700', icon: 'text-blue-500' },
+            orange: { bg: 'bg-orange-100', border: 'border-orange-300', text: 'text-orange-700', icon: 'text-orange-500' },
+            red: { bg: 'bg-red-100', border: 'border-red-300', text: 'text-red-700', icon: 'text-red-500' },
+            teal: { bg: 'bg-teal-100', border: 'border-teal-300', text: 'text-teal-700', icon: 'text-teal-500' },
+            amber: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700', icon: 'text-amber-500' },
+            pink: { bg: 'bg-pink-100', border: 'border-pink-300', text: 'text-pink-700', icon: 'text-pink-500' },
+            gray: { bg: 'bg-gray-100', border: 'border-gray-300', text: 'text-gray-700', icon: 'text-gray-500' }
+        };
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+        function renderTiles() {
+            const data = menuData[currentView];
+            categoryTitle.textContent = data.title;
+
+            // Update breadcrumb
+            updateBreadcrumb();
+
+            // Show/hide back button
+            if (currentView === 'main') {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+
+            // Clear and render tiles
+            tileGrid.innerHTML = '';
+            data.items.forEach(item => {
+                const colors = colorClasses[item.color] || colorClasses.gray;
+                const tile = document.createElement('button');
+                tile.className = `tile-btn ${colors.bg} ${colors.border} border-2 rounded-xl p-6 flex flex-col items-center justify-center text-center min-h-[140px]`;
+
+                if (item.type === 'category') {
+                    // Category tile - navigates deeper
+                    tile.onclick = () => navigateTo(item.id);
+                    tile.innerHTML = `
+                        <i class="fas ${item.icon} text-4xl ${colors.icon} mb-3"></i>
+                        <span class="font-bold ${colors.text} text-lg">${item.name}</span>
+                        <span class="text-gray-400 text-sm mt-1"><i class="fas fa-chevron-right"></i></span>
+                    `;
+                } else {
+                    // Product tile - adds to order
+                    tile.onclick = () => addToOrder(item);
+                    tile.innerHTML = `
+                        <i class="fas ${item.icon} text-3xl ${colors.icon} mb-2"></i>
+                        <span class="font-bold ${colors.text}">${item.name}</span>
+                        ${item.desc ? `<span class="text-gray-500 text-xs">${item.desc}</span>` : ''}
+                        <span class="font-bold text-green-600 text-lg mt-2">$${item.price.toFixed(2)}</span>
+                    `;
+                }
+
+                tileGrid.appendChild(tile);
+            });
+        }
+
+        function updateBreadcrumb() {
+            let trail = '';
+            let path = [];
+
+            // Build path from current view to root
+            let view = currentView;
+            while (view && view !== 'main') {
+                path.unshift(view);
+                view = menuData[view]?.parent;
+            }
+
+            // Render breadcrumb trail
+            path.forEach((viewId, index) => {
+                const data = menuData[viewId];
+                trail += `
+                    <span class="text-gray-400 mx-1">/</span>
+                    <button onclick="navigateTo('${viewId}')" class="breadcrumb-item text-gray-600 hover:text-blue-600">
+                        ${data.title}
+                    </button>
+                `;
+            });
+
+            breadcrumbTrail.innerHTML = trail;
+        }
+
+        function renderOrder() {
+            if (order.length === 0) {
+                orderItems.innerHTML = `
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-shopping-basket text-4xl mb-3"></i>
+                        <p>No items yet</p>
+                        <p class="text-sm">Tap items to add</p>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+            } else {
+                orderItems.innerHTML = order.map((item, index) => `
+                    <div class="order-item flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2 border border-gray-200">
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800">${item.name}</p>
+                            <p class="text-sm text-green-600">$${item.price.toFixed(2)}</p>
+                        </div>
+                        <button onclick="removeFromOrder(${index})" class="w-8 h-8 bg-red-100 hover:bg-red-200 text-red-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+                checkoutBtn.disabled = false;
+            }
+
+            // Update total
+            const total = order.reduce((sum, item) => sum + item.price, 0);
+            orderTotal.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function navigateTo(viewId) {
+            if (menuData[viewId]) {
+                currentView = viewId;
+                navigationHistory.push(viewId);
+                renderTiles();
+            }
+        }
+
+        function goBack() {
+            const data = menuData[currentView];
+            if (data && data.parent) {
+                currentView = data.parent;
+                navigationHistory.push(currentView);
+                renderTiles();
+            }
+        }
+
+        function goBackToCheckin() {
+            // Would navigate back to check-in screen
+            window.location.href = 'enhanced-checkin-screen.html';
+        }
+
+        // ============================================
+        // ORDER MANAGEMENT
+        // ============================================
+        function addToOrder(item) {
+            order.push({ ...item });
+            renderOrder();
+            showToast(`${item.name} added - $${item.price.toFixed(2)}`);
+
+            // Return to main menu after adding
+            setTimeout(() => {
+                currentView = 'main';
+                navigationHistory = ['main'];
+                renderTiles();
+            }, 300);
+        }
+
+        function removeFromOrder(index) {
+            const item = order[index];
+            order.splice(index, 1);
+            renderOrder();
+            showToast(`${item.name} removed`);
+        }
+
+        function clearOrder() {
+            if (order.length === 0) return;
+            if (confirm('Clear all items from the order?')) {
+                order = [];
+                renderOrder();
+            }
+        }
+
+        function checkout() {
+            const total = order.reduce((sum, item) => sum + item.price, 0);
+            const itemCount = order.length;
+
+            // In production, this would open payment modal
+            alert(`Sale Complete!\n\nItems: ${itemCount}\nTotal: $${total.toFixed(2)}\n\nPayment would be processed here.`);
+
+            order = [];
+            renderOrder();
+            showToast('Sale completed!');
+        }
+
+        // ============================================
+        // TOAST NOTIFICATION
+        // ============================================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2000);
+        }
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        renderTiles();
+        renderOrder();
+    </script>
+</body>
+</html>

@@ -46,6 +46,11 @@
                     <i class="fas fa-user-check"></i>
                     <span>Check-In Screen</span>
                 </button>
+                <button onclick="loadMockup('pos-screen.html', this)"
+                        class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2" id="nav-pos">
+                    <i class="fas fa-cash-register"></i>
+                    <span>POS</span>
+                </button>
                 <button onclick="loadMockup('checkin-report-enhanced.html', this)"
                         class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2" id="nav-report">
                     <i class="fas fa-chart-bar"></i>
@@ -95,6 +100,11 @@
                 description: 'Main front-desk interface with quick actions for day passes, punch cards, and new visitors',
                 nav: 'nav-checkin'
             },
+            'pos-screen.html': {
+                title: 'Point of Sale',
+                description: 'Touch-friendly POS with multi-level categories: Favorites, Services (memberships, training, passes), Products (drinks, bars, smoothies)',
+                nav: 'nav-pos'
+            },
             'checkin-report-enhanced.html': {
                 title: 'Enhanced Check-In Report',
                 description: 'Report showing ALL visitors (members + non-members) for insurance compliance',
@@ -127,7 +137,8 @@
         // Handle keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === '1') document.getElementById('nav-checkin').click();
-            if (e.key === '2') document.getElementById('nav-report').click();
+            if (e.key === '2') document.getElementById('nav-pos').click();
+            if (e.key === '3') document.getElementById('nav-report').click();
         });
     </script>
 </body>
