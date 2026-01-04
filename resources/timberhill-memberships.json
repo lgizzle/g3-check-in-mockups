@@ -1,0 +1,506 @@
+{
+  "location": "Timberhill",
+  "last_updated": "2026-01",
+  "business_rules": {
+    "family_member_max_age": 25,
+    "family_member_must_cohabitate": true,
+    "daytime_access": {
+      "weekday_start": "07:00",
+      "weekday_end": "16:00",
+      "weekend": "unrestricted",
+      "description": "Daytime members: M-F 7am-4pm, Sat/Sun anytime"
+    },
+    "therapy": {
+      "max_months_per_calendar_year": 4,
+      "requires_documentation": true,
+      "documentation_types": ["doctor_note", "physical_therapy_note"],
+      "duration_months": 1,
+      "no_prorating": true
+    },
+    "student": {
+      "minimum_term_months": 2
+    },
+    "personal_training": {
+      "non_member_fee_per_session": 7.00,
+      "fee_description": "Non-members must pay $7 extra per training session"
+    },
+    "temporary": {
+      "no_prorating": true,
+      "weekly_duration_days": 7,
+      "monthly_duration": "1 month from start"
+    },
+    "extended_family": {
+      "must_cohabitate": true,
+      "billing": "primary_member_only",
+      "description": "For family members 26+ living in household"
+    },
+    "new_member_required_fields": ["email", "phone"],
+    "new_member_recommended_fields": ["payment_method"],
+    "billing_date": 15,
+    "payment_failed_alert": "PAYMENT UPDATE NEEDED"
+  },
+  "staff_popups": [
+    {
+      "trigger": "create_extended_family",
+      "title": "Extended Family Member - Staff Reminder",
+      "checklist": [
+        "Does this person live in your household?",
+        "This membership will be billed to YOUR account (extended family cannot pay separately)"
+      ]
+    },
+    {
+      "trigger": "create_student",
+      "title": "Student Membership - Staff Reminder",
+      "message": "Student memberships require a 2-month minimum commitment."
+    },
+    {
+      "trigger": "training_sale_non_member",
+      "title": "Non-Member Training Purchase",
+      "message": "This person is not an active member. Non-member fee: $7.00 × sessions must be added.",
+      "requires_confirmation": true
+    },
+    {
+      "trigger": "add_family_member_over_25",
+      "title": "Eligibility Error",
+      "message": "This person does not qualify for this membership. Family members must be under 26 years of age and living in the household.",
+      "blocks_action": true
+    },
+    {
+      "trigger": "daytime_member_offhours_checkin",
+      "title": "Daytime Membership Alert",
+      "message": "Checking in outside allowed hours (M-F 7am-4pm)"
+    },
+    {
+      "trigger": "payment_failed",
+      "title": "Payment Update Needed",
+      "message": "The payment method on file failed. Please update payment information."
+    },
+    {
+      "trigger": "new_member_no_payment_method",
+      "title": "No Payment Method",
+      "message": "This member does not have a credit card or bank account on file."
+    }
+  ],
+  "membership_categories": [
+    {
+      "category": "Standard Active",
+      "access_levels": ["Health Club", "Full Club"],
+      "types": ["Individual", "Couples", "Family"],
+      "has_daytime_variant": true,
+      "rules": {
+        "couples_family_max_age": 25,
+        "couples_family_must_cohabitate": true
+      }
+    },
+    {
+      "category": "Senior",
+      "access_levels": ["Health Club", "Full Club"],
+      "types": ["Individual", "Couples", "Family"],
+      "has_daytime_variant": true,
+      "rules": {
+        "couples_family_max_age": 25,
+        "couples_family_must_cohabitate": true
+      }
+    },
+    {
+      "category": "Platinum",
+      "access_levels": ["Premium"],
+      "types": ["Individual", "Couples", "Family"],
+      "has_daytime_variant": false
+    },
+    {
+      "category": "Extended Family",
+      "access_levels": ["Same as Primary"],
+      "types": ["Add-on"],
+      "rules": {
+        "must_cohabitate": true,
+        "for_members_over_25": true,
+        "billing": "primary_member_only"
+      }
+    },
+    {
+      "category": "Student",
+      "access_levels": ["TBD"],
+      "types": ["Individual"],
+      "rules": {
+        "minimum_term_months": 2
+      }
+    },
+    {
+      "category": "Temporary",
+      "access_levels": ["TBD"],
+      "types": ["Individual", "Couples", "Family"],
+      "duration_options": ["weekly", "monthly"],
+      "rules": {
+        "no_prorating": true,
+        "auto_expire": true
+      }
+    },
+    {
+      "category": "Therapy",
+      "access_levels": ["TBD"],
+      "types": ["Individual"],
+      "rules": {
+        "no_prorating": true,
+        "duration_months": 1,
+        "requires_documentation": true,
+        "max_months_per_calendar_year": 4
+      }
+    },
+    {
+      "category": "Playroom",
+      "types": ["One Child", "Two Children", "Three Children"],
+      "rules": {
+        "child_must_be_playroom_eligible": true
+      }
+    },
+    {
+      "category": "Personal Training",
+      "types": ["Packages", "Memberships"],
+      "rules": {
+        "non_member_fee_per_session": 7.00
+      }
+    }
+  ],
+  "memberships": [
+    {
+      "id": "th_individual_health",
+      "plan_name": "Individual Health Club",
+      "type": "Individual",
+      "category": "Standard Active",
+      "access_level": "Health Club",
+      "is_daytime": false,
+      "status": "Active"
+    },
+    {
+      "id": "th_individual_health_daytime",
+      "plan_name": "Individual Health Club (Daytime)",
+      "type": "Individual",
+      "category": "Standard Active",
+      "access_level": "Health Club",
+      "is_daytime": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_individual_full",
+      "plan_name": "Individual Full Club",
+      "type": "Individual",
+      "category": "Standard Active",
+      "access_level": "Full Club",
+      "is_daytime": false,
+      "status": "Active"
+    },
+    {
+      "id": "th_individual_full_daytime",
+      "plan_name": "Individual Full Club (Daytime)",
+      "type": "Individual",
+      "category": "Standard Active",
+      "access_level": "Full Club",
+      "is_daytime": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_couples_health",
+      "plan_name": "Couples Health Club",
+      "type": "Couples",
+      "category": "Standard Active",
+      "access_level": "Health Club",
+      "is_daytime": false,
+      "max_members": 2,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_couples_health_daytime",
+      "plan_name": "Couples Health Club (Daytime)",
+      "type": "Couples",
+      "category": "Standard Active",
+      "access_level": "Health Club",
+      "is_daytime": true,
+      "max_members": 2,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_couples_full",
+      "plan_name": "Couples Full Club",
+      "type": "Couples",
+      "category": "Standard Active",
+      "access_level": "Full Club",
+      "is_daytime": false,
+      "max_members": 2,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_couples_full_daytime",
+      "plan_name": "Couples Full Club (Daytime)",
+      "type": "Couples",
+      "category": "Standard Active",
+      "access_level": "Full Club",
+      "is_daytime": true,
+      "max_members": 2,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_family_health",
+      "plan_name": "Family Health Club",
+      "type": "Family",
+      "category": "Standard Active",
+      "access_level": "Health Club",
+      "is_daytime": false,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_family_health_daytime",
+      "plan_name": "Family Health Club (Daytime)",
+      "type": "Family",
+      "category": "Standard Active",
+      "access_level": "Health Club",
+      "is_daytime": true,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_family_full",
+      "plan_name": "Family Full Club",
+      "type": "Family",
+      "category": "Standard Active",
+      "access_level": "Full Club",
+      "is_daytime": false,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_family_full_daytime",
+      "plan_name": "Family Full Club (Daytime)",
+      "type": "Family",
+      "category": "Standard Active",
+      "access_level": "Full Club",
+      "is_daytime": true,
+      "max_member_age": 25,
+      "requires_cohabitation": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_senior_individual_health",
+      "plan_name": "Individual Senior Health Club",
+      "type": "Individual",
+      "category": "Senior",
+      "access_level": "Health Club",
+      "is_senior": true,
+      "is_daytime": false,
+      "status": "Active"
+    },
+    {
+      "id": "th_senior_individual_full",
+      "plan_name": "Individual Senior Full Club",
+      "type": "Individual",
+      "category": "Senior",
+      "access_level": "Full Club",
+      "is_senior": true,
+      "is_daytime": false,
+      "status": "Active"
+    },
+    {
+      "id": "th_senior_couples_health",
+      "plan_name": "Couples Senior Health Club",
+      "type": "Couples",
+      "category": "Senior",
+      "access_level": "Health Club",
+      "is_senior": true,
+      "is_daytime": false,
+      "max_members": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_senior_couples_full",
+      "plan_name": "Couples Senior Full Club",
+      "type": "Couples",
+      "category": "Senior",
+      "access_level": "Full Club",
+      "is_senior": true,
+      "is_daytime": false,
+      "max_members": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_senior_family_health",
+      "plan_name": "Family Senior Health Club",
+      "type": "Family",
+      "category": "Senior",
+      "access_level": "Health Club",
+      "is_senior": true,
+      "is_daytime": false,
+      "status": "Active"
+    },
+    {
+      "id": "th_senior_family_full",
+      "plan_name": "Family Senior Full Club",
+      "type": "Family",
+      "category": "Senior",
+      "access_level": "Full Club",
+      "is_senior": true,
+      "is_daytime": false,
+      "status": "Active"
+    },
+    {
+      "id": "th_platinum_individual",
+      "plan_name": "Platinum Individual Membership",
+      "type": "Individual",
+      "category": "Platinum",
+      "access_level": "Premium",
+      "is_platinum": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_platinum_couples",
+      "plan_name": "Platinum Couples Membership",
+      "type": "Couples",
+      "category": "Platinum",
+      "access_level": "Premium",
+      "is_platinum": true,
+      "max_members": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_platinum_family",
+      "plan_name": "Platinum Family Membership",
+      "type": "Family",
+      "category": "Platinum",
+      "access_level": "Premium",
+      "is_platinum": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_extended_family",
+      "plan_name": "Extended Family Member",
+      "type": "Add-on",
+      "category": "Extended Family",
+      "access_level": "Same as Primary",
+      "requires_cohabitation": true,
+      "billing_to_primary": true,
+      "for_members_over_25": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_student",
+      "plan_name": "Student Membership",
+      "type": "Individual",
+      "category": "Student",
+      "min_term_months": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_temp_individual_weekly",
+      "plan_name": "Individual Weekly Temp",
+      "type": "Individual",
+      "category": "Temporary",
+      "duration_type": "weekly",
+      "duration_days": 7,
+      "is_temporary": true,
+      "no_prorating": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_temp_individual_monthly",
+      "plan_name": "Individual Monthly Temp",
+      "type": "Individual",
+      "category": "Temporary",
+      "duration_type": "monthly",
+      "is_temporary": true,
+      "no_prorating": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_temp_couples_weekly",
+      "plan_name": "Couples Weekly Temp",
+      "type": "Couples",
+      "category": "Temporary",
+      "duration_type": "weekly",
+      "duration_days": 7,
+      "is_temporary": true,
+      "no_prorating": true,
+      "max_members": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_temp_couples_monthly",
+      "plan_name": "Couples Monthly Temp",
+      "type": "Couples",
+      "category": "Temporary",
+      "duration_type": "monthly",
+      "is_temporary": true,
+      "no_prorating": true,
+      "max_members": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_temp_family_weekly",
+      "plan_name": "Family Weekly Temp",
+      "type": "Family",
+      "category": "Temporary",
+      "duration_type": "weekly",
+      "duration_days": 7,
+      "is_temporary": true,
+      "no_prorating": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_temp_family_monthly",
+      "plan_name": "Family Monthly Temp",
+      "type": "Family",
+      "category": "Temporary",
+      "duration_type": "monthly",
+      "is_temporary": true,
+      "no_prorating": true,
+      "status": "Active"
+    },
+    {
+      "id": "th_therapy",
+      "plan_name": "Therapy Membership",
+      "type": "Individual",
+      "category": "Therapy",
+      "duration_type": "monthly",
+      "duration_months": 1,
+      "is_therapy": true,
+      "no_prorating": true,
+      "requires_documentation": true,
+      "max_per_calendar_year": 4,
+      "status": "Active"
+    },
+    {
+      "id": "th_playroom_1",
+      "plan_name": "Playroom - One Child",
+      "type": "Playroom",
+      "category": "Playroom",
+      "children_count": 1,
+      "status": "Active"
+    },
+    {
+      "id": "th_playroom_2",
+      "plan_name": "Playroom - Two Children",
+      "type": "Playroom",
+      "category": "Playroom",
+      "children_count": 2,
+      "status": "Active"
+    },
+    {
+      "id": "th_playroom_3",
+      "plan_name": "Playroom - Three Children",
+      "type": "Playroom",
+      "category": "Playroom",
+      "children_count": 3,
+      "status": "Active"
+    }
+  ]
+}
