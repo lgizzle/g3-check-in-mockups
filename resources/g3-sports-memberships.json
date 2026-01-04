@@ -1,0 +1,192 @@
+{
+  "location": "G3 Sports",
+  "last_updated": "2026-01",
+  "business_rules": {
+    "payment_required": true,
+    "payment_required_note": "All memberships must have a valid payment method attached to the account holder to be active",
+    "hold_behavior": "Hold date activation changes account status to INACTIVE",
+    "checkin_display": [
+      "membership_status",
+      "termination_date",
+      "suspension_date",
+      "hold_status"
+    ]
+  },
+  "membership_types": {
+    "Individual": { "max_members": 1 },
+    "Couples": { "max_members": 2 },
+    "Family": { "max_members": 4 },
+    "Misc": { "max_members": 10, "note": "Variable - see specific plan" }
+  },
+  "memberships": [
+    {
+      "id": "g3_full_individual",
+      "plan_name": "Full Membership",
+      "type": "Individual",
+      "category": "Membership",
+      "monthly_rate": 55.00,
+      "init_fee": 99.00,
+      "max_members": 1,
+      "service_fee": 9.00,
+      "total_monthly": 64.00,
+      "status": "Active",
+      "requires_payment": true
+    },
+    {
+      "id": "g3_full_couples",
+      "plan_name": "Full Membership",
+      "type": "Couples",
+      "category": "Membership",
+      "monthly_rate": 85.00,
+      "init_fee": 99.00,
+      "max_members": 2,
+      "service_fee": 9.00,
+      "total_monthly": 94.00,
+      "status": "Active",
+      "requires_payment": true
+    },
+    {
+      "id": "g3_full_family",
+      "plan_name": "Full Membership",
+      "type": "Family",
+      "category": "Membership",
+      "monthly_rate": 120.00,
+      "init_fee": 99.00,
+      "max_members": 4,
+      "service_fee": 9.00,
+      "total_monthly": 129.00,
+      "status": "Active",
+      "requires_payment": true
+    },
+    {
+      "id": "g3_student_individual",
+      "plan_name": "Student Full Membership",
+      "type": "Individual",
+      "category": "Membership",
+      "monthly_rate": 40.00,
+      "init_fee": 49.00,
+      "max_members": 1,
+      "service_fee": 9.00,
+      "total_monthly": 49.00,
+      "status": "Active",
+      "requires_payment": true
+    },
+    {
+      "id": "g3_t3_individual",
+      "plan_name": "T3 Membership",
+      "type": "Individual",
+      "category": "Complimentary",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 1,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_t3_couples",
+      "plan_name": "T3 Membership",
+      "type": "Couples",
+      "category": "Complimentary",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 2,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_t3_family",
+      "plan_name": "T3 Membership",
+      "type": "Family",
+      "category": "Complimentary",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 4,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_vball_coach_individual",
+      "plan_name": "G3 Volleyball - Coach",
+      "type": "Individual",
+      "category": "Membership",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 1,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_vball_coach_couples",
+      "plan_name": "G3 Volleyball - Coach",
+      "type": "Couples",
+      "category": "Membership",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 2,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_employee_individual",
+      "plan_name": "G3 Employee",
+      "type": "Individual",
+      "category": "Employee",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 1,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_employee_family",
+      "plan_name": "G3 Employee",
+      "type": "Family",
+      "category": "Employee",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 4,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_tac_employee",
+      "plan_name": "TAC Employee",
+      "type": "Misc",
+      "category": "Employee",
+      "monthly_rate": 0.00,
+      "init_fee": 0.00,
+      "max_members": 10,
+      "service_fee": 0.00,
+      "total_monthly": 0.00,
+      "status": "Active",
+      "requires_payment": false
+    },
+    {
+      "id": "g3_vball_academy",
+      "plan_name": "G3 Volleyball - Academy",
+      "type": "Individual",
+      "category": "Volleyball Academy",
+      "monthly_rate": 150.00,
+      "init_fee": 50.00,
+      "max_members": 1,
+      "service_fee": 0.00,
+      "total_monthly": 150.00,
+      "status": "Active",
+      "requires_payment": true
+    }
+  ]
+}
