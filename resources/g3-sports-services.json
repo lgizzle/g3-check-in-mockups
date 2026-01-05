@@ -1,0 +1,454 @@
+{
+  "location": "G3 Sports",
+  "last_updated": "2026-01",
+  "service_type": "consumable_package",
+  "business_rules": {
+    "tracking_method": "session_deduction",
+    "display_at_checkin": true,
+    "show_remaining_uses": true,
+    "allow_manual_deduction": true,
+    "block_when_zero": true
+  },
+  "services": [
+    {
+      "id": "g3_day_pass",
+      "name": "Day Pass",
+      "category": "day_pass",
+      "price": 10.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_day_pass_10plus1",
+      "name": "Day Pass - 10 Visit + 1",
+      "category": "day_pass",
+      "price": 100.00,
+      "sessions": 11,
+      "status": "Active"
+    },
+    {
+      "id": "g3_day_pass_free",
+      "name": "Free Day Pass",
+      "category": "day_pass",
+      "price": 0.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_30_1",
+      "name": "Personal Training | Individual Member | 30 Min (1 pack)",
+      "category": "personal_training",
+      "subcategory": "30_min",
+      "client_type": "individual",
+      "price": 45.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_30_4",
+      "name": "Personal Training | Individual Member | 30 Min (4 pack)",
+      "category": "personal_training",
+      "subcategory": "30_min",
+      "client_type": "individual",
+      "price": 176.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_30_8",
+      "name": "Personal Training | Individual Member | 30 Min (8 pack)",
+      "category": "personal_training",
+      "subcategory": "30_min",
+      "client_type": "individual",
+      "price": 344.00,
+      "sessions": 8,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_30_12",
+      "name": "Personal Training | Individual Member | 30 Min (12 pack)",
+      "category": "personal_training",
+      "subcategory": "30_min",
+      "client_type": "individual",
+      "price": 504.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_30_20",
+      "name": "Personal Training | Individual Member | 30 Min (20 pack)",
+      "category": "personal_training",
+      "subcategory": "30_min",
+      "client_type": "individual",
+      "price": 800.00,
+      "sessions": 20,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_60_1",
+      "name": "Personal Training | Individual Member | 60 Min (1 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "individual",
+      "price": 70.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_60_4",
+      "name": "Personal Training | Individual Member | 60 Min (4 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "individual",
+      "price": 272.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_60_8",
+      "name": "Personal Training | Individual Member | 60 Min (8 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "individual",
+      "price": 528.00,
+      "sessions": 8,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_60_12",
+      "name": "Personal Training | Individual Member | 60 Min (12 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "individual",
+      "price": 768.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_ind_60_20",
+      "name": "Personal Training | Individual Member | 60 Min (20 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "individual",
+      "price": 1200.00,
+      "sessions": 20,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_couples_60_1",
+      "name": "Personal Training | Couples | 60 Min (1 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "couples",
+      "price": 100.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_couples_60_4",
+      "name": "Personal Training | Couples | 60 Min (4 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "couples",
+      "price": 384.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_couples_60_8",
+      "name": "Personal Training | Couples | 60 Min (8 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "couples",
+      "price": 752.00,
+      "sessions": 8,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_couples_60_12",
+      "name": "Personal Training | Couples | 60 Min (12 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "couples",
+      "price": 1092.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_couples_60_15",
+      "name": "Personal Training | Couples | 60 Min (15 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "couples",
+      "price": 1335.00,
+      "sessions": 15,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_couples_60_20",
+      "name": "Personal Training | Couples | 60 Min (20 pack)",
+      "category": "personal_training",
+      "subcategory": "60_min",
+      "client_type": "couples",
+      "price": 1720.00,
+      "sessions": 20,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_athlete_90_1",
+      "name": "Personal Training | Individual Athlete | 90 Min (1 pack)",
+      "category": "personal_training",
+      "subcategory": "90_min",
+      "client_type": "athlete",
+      "price": 90.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_athlete_90_4",
+      "name": "Personal Training | Individual Athlete | 90 Min (4 pack)",
+      "category": "personal_training",
+      "subcategory": "90_min",
+      "client_type": "athlete",
+      "price": 352.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_athlete_90_8",
+      "name": "Personal Training | Individual Athlete | 90 Min (8 pack)",
+      "category": "personal_training",
+      "subcategory": "90_min",
+      "client_type": "athlete",
+      "price": 688.00,
+      "sessions": 8,
+      "status": "Active"
+    },
+    {
+      "id": "g3_pt_athlete_90_12",
+      "name": "Personal Training | Individual Athlete | 90 Min (12 pack)",
+      "category": "personal_training",
+      "subcategory": "90_min",
+      "client_type": "athlete",
+      "price": 1008.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_team_60_1",
+      "name": "Team Training | 60 min. (1 pack)",
+      "category": "team_training",
+      "subcategory": "60_min",
+      "client_type": "team",
+      "price": 30.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_team_60_6",
+      "name": "Team Training | 60 min. (6 pack)",
+      "category": "team_training",
+      "subcategory": "60_min",
+      "client_type": "team",
+      "price": 150.00,
+      "sessions": 6,
+      "status": "Active"
+    },
+    {
+      "id": "g3_team_60_12",
+      "name": "Team Training | 60 min. (12 pack)",
+      "category": "team_training",
+      "subcategory": "60_min",
+      "client_type": "team",
+      "price": 180.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_team_90_1",
+      "name": "Team Training | 90 min. (1 pack)",
+      "category": "team_training",
+      "subcategory": "90_min",
+      "client_type": "team",
+      "price": 40.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_team_90_6",
+      "name": "Team Training | 90 min. (6 pack)",
+      "category": "team_training",
+      "subcategory": "90_min",
+      "client_type": "team",
+      "price": 215.00,
+      "sessions": 6,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_60_1",
+      "name": "Small Group Training | 60 Min (1 Pack)",
+      "category": "small_group_training",
+      "subcategory": "60_min",
+      "client_type": "small_group",
+      "price": 45.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_60_4",
+      "name": "Small Group Training | 60 Min (4 Pack)",
+      "category": "small_group_training",
+      "subcategory": "60_min",
+      "client_type": "small_group",
+      "price": 172.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_60_8",
+      "name": "Small Group Training | 60 Min (8 Pack)",
+      "category": "small_group_training",
+      "subcategory": "60_min",
+      "client_type": "small_group",
+      "price": 320.00,
+      "sessions": 8,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_60_12",
+      "name": "Small Group Training | 60 Min (12 Pack)",
+      "category": "small_group_training",
+      "subcategory": "60_min",
+      "client_type": "small_group",
+      "price": 444.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_90_1",
+      "name": "Small Group Training | 90 Min (1 Pack)",
+      "category": "small_group_training",
+      "subcategory": "90_min",
+      "client_type": "small_group",
+      "price": 60.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_90_4",
+      "name": "Small Group Training | 90 Min (4 Pack)",
+      "category": "small_group_training",
+      "subcategory": "90_min",
+      "client_type": "small_group",
+      "price": 222.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_90_8",
+      "name": "Small Group Training | 90 Min (8 Pack)",
+      "category": "small_group_training",
+      "subcategory": "90_min",
+      "client_type": "small_group",
+      "price": 448.00,
+      "sessions": 8,
+      "status": "Active"
+    },
+    {
+      "id": "g3_small_group_90_12",
+      "name": "Small Group Training | 90 Min (12 Pack)",
+      "category": "small_group_training",
+      "subcategory": "90_min",
+      "client_type": "small_group",
+      "price": 648.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_monthly_programming",
+      "name": "Personal Training | Monthly Programming",
+      "category": "programming",
+      "price": 75.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_silver",
+      "name": "Hybrid Personal Training - Silver",
+      "category": "hybrid_training",
+      "price": 225.00,
+      "sessions": 1,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_gold",
+      "name": "Hybrid Personal Training - Gold",
+      "category": "hybrid_training",
+      "price": 291.00,
+      "sessions": 2,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_platinum",
+      "name": "Hybrid Personal Training - Platinum",
+      "category": "hybrid_training",
+      "price": 419.00,
+      "sessions": 4,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_3mo_silver",
+      "name": "Hybrid Personal Training - 3-Month Silver",
+      "category": "hybrid_training",
+      "term_months": 3,
+      "price": 629.00,
+      "sessions": 3,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_3mo_gold",
+      "name": "Hybrid Personal Training - 3-Month Gold",
+      "category": "hybrid_training",
+      "term_months": 3,
+      "price": 814.00,
+      "sessions": 6,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_3mo_platinum",
+      "name": "Hybrid Personal Training - 3-Month Platinum",
+      "category": "hybrid_training",
+      "term_months": 3,
+      "price": 1173.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_6mo_silver",
+      "name": "Hybrid Personal Training - 6-Month Silver",
+      "category": "hybrid_training",
+      "term_months": 6,
+      "price": 1152.00,
+      "sessions": 6,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_6mo_gold",
+      "name": "Hybrid Personal Training - 6-Month Gold",
+      "category": "hybrid_training",
+      "term_months": 6,
+      "price": 1493.00,
+      "sessions": 12,
+      "status": "Active"
+    },
+    {
+      "id": "g3_hybrid_6mo_platinum",
+      "name": "Hybrid Personal Training - 6-Month Platinum",
+      "category": "hybrid_training",
+      "term_months": 6,
+      "price": 2155.00,
+      "sessions": 24,
+      "status": "Active"
+    }
+  ]
+}
