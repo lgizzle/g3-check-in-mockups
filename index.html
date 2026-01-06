@@ -7,139 +7,114 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        .nav-btn { transition: all 0.2s; }
-        .nav-btn.active {
-            background-color: white;
-            color: #1e3a8a;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .nav-btn:not(.active):hover {
-            background-color: rgba(255,255,255,0.2);
-        }
-        #mockup-frame {
-            height: calc(100vh - 140px);
-        }
+        .demo-card { transition: all 0.2s; }
+        .demo-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-100 min-h-screen">
     <!-- Header -->
-    <header class="bg-blue-900 text-white py-4 px-6 shadow-lg">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-4">
-                    <img src="https://placehold.co/50x50/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
-                    <div>
-                        <h1 class="text-xl font-bold">G3 Check-In Enhancement</h1>
-                        <p class="text-blue-200 text-sm">Interactive Mockups - November 2025</p>
-                    </div>
-                </div>
-                <div class="text-right text-sm">
-                    <p class="text-blue-200">Project: 2025-11-checkin-pos-enhancement</p>
-                    <p class="text-blue-300 text-xs">Critical Deadline: January 2026</p>
+    <header class="bg-blue-900 text-white py-6 px-6 shadow-lg">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <img src="https://placehold.co/60x60/1e3a8a/white?text=G3" alt="G3 Logo" class="rounded">
+                <div class="text-left">
+                    <h1 class="text-2xl font-bold">G3 Check-In Enhancement</h1>
+                    <p class="text-blue-200">Interactive Mockups - January 2026</p>
                 </div>
             </div>
-
-            <!-- Navigation Tabs -->
-            <nav class="flex gap-2">
-                <button onclick="loadMockup('enhanced-checkin-screen.html', this)"
-                        class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2 active" id="nav-checkin">
-                    <i class="fas fa-user-check"></i>
-                    <span>Check-In Screen</span>
-                </button>
-                <button onclick="loadMockup('pos-screen.html', this)"
-                        class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2" id="nav-pos">
-                    <i class="fas fa-cash-register"></i>
-                    <span>POS</span>
-                </button>
-                <button onclick="loadMockup('checkin-report-enhanced.html', this)"
-                        class="nav-btn px-4 py-2 rounded-t-lg font-medium flex items-center gap-2" id="nav-report">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Check-In Report</span>
-                </button>
-            </nav>
         </div>
     </header>
 
-    <!-- Description Bar -->
-    <div class="bg-white border-b px-6 py-3 shadow-sm">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div id="mockup-description">
-                <h2 class="font-bold text-gray-800" id="desc-title">Enhanced Check-In Screen</h2>
-                <p class="text-sm text-gray-600" id="desc-text">Main front-desk interface with quick actions for day passes, punch cards, and new visitors</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="#" onclick="openInNewTab(); return false;" class="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
-                    <i class="fas fa-external-link-alt"></i>
-                    Open in new tab
-                </a>
-            </div>
-        </div>
-    </div>
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto py-8 px-6">
+        <p class="text-center text-gray-600 mb-8">Select a demo to view. Each mockup has navigation to switch between screens.</p>
 
-    <!-- Iframe Container -->
-    <main class="flex-1 p-4">
-        <div class="max-w-7xl mx-auto h-full">
-            <iframe id="mockup-frame"
-                    src="enhanced-checkin-screen.html"
-                    class="w-full rounded-lg shadow-lg bg-white border"
-                    frameborder="0">
-            </iframe>
+        <!-- Demo Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Check-In Screen -->
+            <a href="enhanced-checkin-screen.html" class="demo-card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-green-500 text-white p-4">
+                    <i class="fas fa-user-check text-3xl"></i>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Check-In Screen</h3>
+                    <p class="text-sm text-gray-600">Main front-desk interface with member lookup, family check-ins, and service alerts</p>
+                    <p class="text-blue-600 text-sm mt-3 font-medium">View Demo →</p>
+                </div>
+            </a>
+
+            <!-- POS Screen -->
+            <a href="pos-screen.html" class="demo-card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-purple-500 text-white p-4">
+                    <i class="fas fa-cash-register text-3xl"></i>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Point of Sale</h3>
+                    <p class="text-sm text-gray-600">Touch-friendly POS with categories for memberships, training, passes, and products</p>
+                    <p class="text-blue-600 text-sm mt-3 font-medium">View Demo →</p>
+                </div>
+            </a>
+
+            <!-- PT Portal -->
+            <a href="pt-portal-demo.html" class="demo-card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-blue-500 text-white p-4">
+                    <i class="fas fa-dumbbell text-3xl"></i>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">PT Portal</h3>
+                    <p class="text-sm text-gray-600">Personal training session management with SetMore integration and revenue tracking</p>
+                    <p class="text-blue-600 text-sm mt-3 font-medium">View Demo →</p>
+                </div>
+            </a>
+
+            <!-- Check-In Report -->
+            <a href="checkin-report-enhanced.html" class="demo-card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-orange-500 text-white p-4">
+                    <i class="fas fa-chart-bar text-3xl"></i>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Check-In Report</h3>
+                    <p class="text-sm text-gray-600">Daily visitor log showing members and non-members for insurance compliance</p>
+                    <p class="text-blue-600 text-sm mt-3 font-medium">View Demo →</p>
+                </div>
+            </a>
+
+            <!-- Trainer Admin -->
+            <a href="trainer-admin.html" class="demo-card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-teal-500 text-white p-4">
+                    <i class="fas fa-users-cog text-3xl"></i>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Trainer Admin</h3>
+                    <p class="text-sm text-gray-600">Manage trainer profiles, revenue splits, and performance metrics</p>
+                    <p class="text-blue-600 text-sm mt-3 font-medium">View Demo →</p>
+                </div>
+            </a>
+
+            <!-- PT Dashboard -->
+            <a href="pt-dashboard.html" class="demo-card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-indigo-500 text-white p-4">
+                    <i class="fas fa-tachometer-alt text-3xl"></i>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">PT Dashboard</h3>
+                    <p class="text-sm text-gray-600">KPIs and analytics for personal training sessions and revenue</p>
+                    <p class="text-blue-600 text-sm mt-3 font-medium">View Demo →</p>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Project Info -->
+        <div class="mt-12 text-center text-sm text-gray-500">
+            <p>Project: 2025-11-checkin-pos-enhancement | Target: January 2026</p>
+            <p class="mt-1">
+                <a href="https://github.com/lgizzle/g3-check-in-mockups" class="text-blue-600 hover:underline" target="_blank">
+                    <i class="fab fa-github mr-1"></i>View on GitHub
+                </a>
+            </p>
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 py-3 px-6 text-center text-sm">
-        <p>G3 Sports & Fitness - Check-In Enhancement Project | Mockups for review and testing</p>
-    </footer>
-
-    <script>
-        // Mockup metadata
-        const mockupInfo = {
-            'enhanced-checkin-screen.html': {
-                title: 'Enhanced Check-In Screen',
-                description: 'Main front-desk interface with quick actions for day passes, punch cards, and new visitors',
-                nav: 'nav-checkin'
-            },
-            'pos-screen.html': {
-                title: 'Point of Sale',
-                description: 'Touch-friendly POS with multi-level categories: Favorites, Services (memberships, training, passes), Products (drinks, bars, smoothies)',
-                nav: 'nav-pos'
-            },
-            'checkin-report-enhanced.html': {
-                title: 'Enhanced Check-In Report',
-                description: 'Report showing ALL visitors (members + non-members) for insurance compliance',
-                nav: 'nav-report'
-            }
-        };
-
-        let currentMockup = 'enhanced-checkin-screen.html';
-
-        function loadMockup(filename, btnElement) {
-            currentMockup = filename;
-
-            // Update iframe
-            document.getElementById('mockup-frame').src = filename;
-
-            // Update active button
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-
-            // Update description
-            const info = mockupInfo[filename];
-            document.getElementById('desc-title').textContent = info.title;
-            document.getElementById('desc-text').textContent = info.description;
-        }
-
-        function openInNewTab() {
-            window.open(currentMockup, '_blank');
-        }
-
-        // Handle keyboard navigation
-        document.addEventListener('keydown', function(e) {
-            if (e.key === '1') document.getElementById('nav-checkin').click();
-            if (e.key === '2') document.getElementById('nav-pos').click();
-            if (e.key === '3') document.getElementById('nav-report').click();
-        });
-    </script>
 </body>
 </html>
