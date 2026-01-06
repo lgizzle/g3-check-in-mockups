@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 PT Portal - December 2025 Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* GMS-inspired color scheme */
+        :root {
+            --primary: #466985;
+            --primary-dark: #3a5a73;
+            --primary-light: #5a7d99;
+            --accent: #2980b9;
+            --accent-light: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        .step-btn { transition: all 0.2s; }
+        .step-btn.active { background-color: var(--primary); color: white; }
+        .step-btn.completed { background-color: var(--success); color: white; }
+        .step-btn:not(.active):not(.completed) { background-color: #e5e7eb; color: #6b7280; }
+        .table-row:hover { background-color: #f3f4f6; }
+        .warning-row { background-color: #fef3c7; }
+        .error-row { background-color: #fee2e2; }
+        .filter-tab { transition: all 0.15s; }
+        .filter-tab.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .filter-tab:not(.active):hover { background-color: #f3f4f6; }
+        .modal-backdrop { background-color: rgba(0,0,0,0.5); }
+        .radio-card { transition: all 0.15s; }
+        .radio-card:hover { border-color: var(--accent-light); }
+        .radio-card.selected { border-color: var(--primary); background-color: #eef4f9; }
+        .loading { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        /* Path selection cards */
+        .path-card { transition: all 0.2s; border: 2px solid #e5e7eb; }
+        .path-card:hover { border-color: var(--accent-light); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .path-card.selected { border-color: var(--primary); background-color: #eef4f9; }
+        .path-card.disabled { opacity: 0.6; cursor: not-allowed; }
+        .path-card.disabled:hover { transform: none; box-shadow: none; }
+        /* Primary button */
+        .primary-btn { background-color: var(--primary); }
+        .primary-btn:hover { background-color: var(--primary-dark); }
+        .text-primary { color: var(--primary); }
+        .bg-primary-50 { background-color: #eef4f9; }
+        .border-primary { border-color: var(--primary); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header - GMS-inspired styling -->
+    <header class="text-white py-4 px-6 shadow-lg" style="background-color: var(--primary);">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: var(--primary-dark);">
+                    <i class="fas fa-dumbbell text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">G3 SPORTS & FITNESS</h1>
+                    <p class="text-gray-300 text-sm">Personal Training Portal</p>
+                </div>
+            </div>
+            <!-- Main Navigation -->
+            <nav class="flex items-center gap-1">
+                <a href="enhanced-checkin-screen.html" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 text-gray-200 text-sm">
+                    <i class="fas fa-user-check mr-1"></i> Check-In
+                </a>
+                <a href="pos-system.html" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 text-gray-200 text-sm">
+                    <i class="fas fa-cash-register mr-1"></i> POS
+                </a>
+                <a href="pt-portal-demo.html" class="px-3 py-2 rounded-lg bg-white bg-opacity-20 text-white text-sm font-medium">
+                    <i class="fas fa-dumbbell mr-1"></i> PT Portal
+                </a>
+                <a href="index.html" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 text-gray-200 text-sm">
+                    <i class="fas fa-th-large mr-1"></i> All Demos
+                </a>
+            </nav>
+            <div class="text-right">
+                <p class="text-sm text-gray-300">Logged in as: JR (Lead Trainer)</p>
+                <p class="text-xs text-gray-400">Jan 3, 2026</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Demo Notice -->
+    <div class="bg-green-50 border-b border-green-200 py-3 px-6">
+        <div class="max-w-7xl mx-auto">
+            <p class="text-sm text-green-800">
+                <i class="fas fa-check-circle mr-2"></i>
+                <strong>LIVE DEMO:</strong> Using actual December 2025 SetMore data (554 confirmed sessions) with realistic GMS member matching.
+            </p>
+        </div>
+    </div>
+
+    <!-- PATH SELECTION SCREEN -->
+    <div id="path-selection" class="max-w-5xl mx-auto py-8 px-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">
+                <i class="fas fa-route mr-3" style="color: var(--primary);"></i>
+                How would you like to import sessions?
+            </h2>
+            <p class="text-gray-600 text-center mb-8">Choose your integration method for bringing SetMore data into PT Portal</p>
+
+            <!-- Workflow Explainer Button -->
+            <div class="text-center mb-6">
+                <button onclick="showWorkflowExplainer()" class="text-sm px-4 py-2 border rounded-lg hover:bg-gray-50" style="border-color: var(--primary); color: var(--primary);">
+                    <i class="fas fa-question-circle mr-2"></i> What is this? (For Dave)
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
+                <!-- Path A: CSV Import -->
+                <div class="path-card rounded-xl p-6 cursor-pointer bg-white" onclick="selectPath('csv')">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3" style="background-color: #e8f5e9;">
+                            <i class="fas fa-file-csv text-3xl" style="color: var(--success);"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">CSV Import</h3>
+                        <span class="inline-block px-2 py-1 bg-green-100 text-green-800 rounded text-xs mt-1">Available Now</span>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 mb-4">
+                        <p><i class="fas fa-clock text-gray-400 mr-2"></i>~10 min/month</p>
+                        <p><i class="fas fa-dollar-sign text-gray-400 mr-2"></i>$0 cost</p>
+                        <p><i class="fas fa-database text-gray-400 mr-2"></i>Full data including cost</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <p class="text-xs text-gray-500 mb-2"><strong>How it works:</strong></p>
+                        <ol class="text-xs text-gray-500 space-y-1">
+                            <li>1. Export report from SetMore</li>
+                            <li>2. Upload CSV file here</li>
+                            <li>3. Review & process sessions</li>
+                        </ol>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <p class="text-xs font-medium text-green-700"><i class="fas fa-check mr-1"></i> Recommended for now</p>
+                    </div>
+                </div>
+
+                <!-- Path B: Direct API -->
+                <div class="path-card rounded-xl p-6 cursor-pointer bg-white" onclick="selectPath('api')">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3" style="background-color: #e3f2fd;">
+                            <i class="fas fa-plug text-3xl" style="color: var(--accent);"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">API Direct</h3>
+                        <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs mt-1">Preview Demo</span>
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600 mb-4">
+                        <p><i class="fas fa-clock text-gray-400 mr-2"></i>~1 min/month</p>
+                        <p><i class="fas fa-dollar-sign text-gray-400 mr-2"></i>$0 cost</p>
+                        <p><i class="fas fa-database text-gray-400 mr-2"></i>Full data, one-click</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <p class="text-xs text-gray-500 mb-2"><strong>Requirements:</strong></p>
+                        <ul class="text-xs text-gray-500 space-y-1">
+                            <li>• SetMore Pro account</li>
+                            <li>• API access approval</li>
+                            <li>• One-time OAuth setup</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <button onclick="event.stopPropagation(); requestApiAccess();" class="w-full px-3 py-2 text-xs border rounded hover:bg-gray-50" style="border-color: var(--accent); color: var(--accent);">
+                            <i class="fas fa-envelope mr-1"></i> Request API Access
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
+                <h4 class="font-medium text-gray-700 mb-3"><i class="fas fa-table mr-2"></i>Quick Comparison</h4>
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-gray-500">
+                            <th class="pb-2">Factor</th>
+                            <th class="pb-2 text-center">CSV Import</th>
+                            <th class="pb-2 text-center">API Direct</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        <tr>
+                            <td class="py-1">Monthly Effort</td>
+                            <td class="py-1 text-center">~10 min</td>
+                            <td class="py-1 text-center">~1 min</td>
+                        </tr>
+                        <tr>
+                            <td class="py-1">Cost Field Included</td>
+                            <td class="py-1 text-center"><i class="fas fa-check text-green-600"></i></td>
+                            <td class="py-1 text-center"><i class="fas fa-check text-green-600"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-1">Ongoing Cost</td>
+                            <td class="py-1 text-center">$0</td>
+                            <td class="py-1 text-center">$0</td>
+                        </tr>
+                        <tr>
+                            <td class="py-1">File Handling</td>
+                            <td class="py-1 text-center">Manual upload</td>
+                            <td class="py-1 text-center">None</td>
+                        </tr>
+                        <tr>
+                            <td class="py-1">Available</td>
+                            <td class="py-1 text-center"><span class="text-green-600 font-medium">Now</span></td>
+                            <td class="py-1 text-center"><span class="text-blue-600 font-medium">Pending Approval</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center">
+                <p class="text-sm text-gray-500 mb-4">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+                    <strong>Recommendation:</strong> Start with CSV Import now. We're requesting API access for a one-click solution.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step Indicator (hidden until path selected) -->
+    <div id="step-indicator" class="bg-white border-b shadow-sm py-4 px-6 hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <!-- Selected Path Badge -->
+                    <div id="selected-path-badge" class="px-3 py-1 rounded-full text-sm font-medium mr-4" style="background-color: #e8f5e9; color: var(--success);">
+                        <i class="fas fa-file-csv mr-1"></i> CSV Import
+                    </div>
+                    <button onclick="showPathSelection()" class="text-sm text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-exchange-alt mr-1"></i> Change
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="goToStep(1)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-1">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">1</span>
+                        Import
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(2)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-2">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">2</span>
+                        Review
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(3)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-3">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">3</span>
+                        Deduct
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(4)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-4">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">4</span>
+                        Follow-Up
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(5)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-5">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">5</span>
+                        Revenue
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select class="border rounded-lg px-3 py-2 text-sm" id="monthSelect">
+                        <option value="2025-12" selected>December 2025</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (hidden until path selected) -->
+    <main id="main-content" class="max-w-7xl mx-auto py-6 px-6 hidden">
+        <!-- STEP 1: Import -->
+        <div id="step-1" class="step-content">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-file-import mr-3" style="color: var(--primary);"></i>
+                    Step 1: Import SetMore Report
+                </h2>
+
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center transition-colors" id="drop-zone" style="hover:border-color: var(--accent-light);">
+                    <i class="fas fa-cloud-upload-alt text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-lg text-gray-600 mb-4">Drag & drop your SetMore CSV export here</p>
+                    <p class="text-sm text-gray-400 mb-6">or</p>
+                    <label class="px-6 py-3 text-white rounded-lg cursor-pointer inline-block" style="background-color: var(--primary);">
+                        <i class="fas fa-folder-open mr-2"></i>
+                        Choose File
+                        <input type="file" class="hidden" accept=".csv,.xlsx" onchange="handleFileUpload(this)">
+                    </label>
+                </div>
+
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Expected Format</h3>
+                    <p class="text-sm text-blue-700 mb-2">Export from SetMore: Reports &gt; Appointments &gt; Export</p>
+                    <p class="text-xs text-blue-600">Required columns: Appointment date, Service/class/event, Cost, Team member, Customer name, Status</p>
+                </div>
+
+                <!-- File Preview -->
+                <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200 hidden" id="file-preview">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-file-excel text-3xl text-green-600"></i>
+                            <div>
+                                <p class="font-medium text-green-800" id="file-name">Complete_December_Setmore Report.xlsx</p>
+                                <p class="text-sm text-green-600" id="session-count">554 confirmed sessions found</p>
+                            </div>
+                        </div>
+                        <button onclick="processImport()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            Import & Continue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Demo button -->
+                <div class="mt-6 text-center">
+                    <button onclick="loadDemoData()" class="px-6 py-3 rounded-lg font-medium" style="background-color: #e3f2fd; color: var(--accent);">
+                        <i class="fas fa-play-circle mr-2"></i> Load December 2025 Demo Data
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2">Uses actual SetMore export with 554 confirmed sessions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Review Sessions -->
+        <div id="step-2" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-list-check text-primary mr-3"></i>
+                            Step 2: Review Sessions
+                        </h2>
+                        <div class="text-sm text-gray-500">
+                            <span id="total-sessions-display">0</span> sessions imported
+                        </div>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="filterSessions('all')" class="filter-tab active px-4 py-2 border rounded-lg text-sm font-medium" id="filter-all">
+                            All <span class="ml-1 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs" id="count-all">0</span>
+                        </button>
+                        <button onclick="filterSessions('ready')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-ready">
+                            <i class="fas fa-check text-green-600 mr-1"></i> Ready
+                            <span class="ml-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs" id="count-ready">0</span>
+                        </button>
+                        <button onclick="filterSessions('unmatched')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-unmatched">
+                            <i class="fas fa-question text-yellow-600 mr-1"></i> Unmatched
+                            <span class="ml-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs" id="count-unmatched">0</span>
+                        </button>
+                        <button onclick="filterSessions('nopackage')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-nopackage">
+                            <i class="fas fa-exclamation-triangle text-red-600 mr-1"></i> No Package
+                            <span class="ml-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs" id="count-nopackage">0</span>
+                        </button>
+                        <button onclick="filterSessions('comped')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-comped">
+                            <i class="fas fa-gift text-blue-600 mr-1"></i> Comped
+                            <span class="ml-1 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs" id="count-comped">0</span>
+                        </button>
+                        <button onclick="filterSessions('rookies')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-rookies">
+                            <i class="fas fa-users text-indigo-600 mr-1"></i> Rookies
+                            <span class="ml-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs" id="count-rookies">0</span>
+                        </button>
+                        <button onclick="filterSessions('consultation')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-consultation">
+                            <i class="fas fa-comments text-gray-600 mr-1"></i> Consult
+                            <span class="ml-1 px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs" id="count-consultation">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sessions Table -->
+                <div class="overflow-x-auto" style="max-height: 500px;">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Date</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Member</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">GMS Match</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Service</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Value</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y" id="sessions-table">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-gray-50 border-t text-sm text-gray-500 text-center" id="table-summary">
+                    Loading...
+                </div>
+
+                <!-- Actions -->
+                <div class="p-6 border-t flex justify-between items-center">
+                    <button onclick="goToStep(1)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Import
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-gray-500" id="issues-count">0 issues need attention</span>
+                        <button onclick="goToStep(3)" class="px-6 py-3 text-white rounded-lg primary-btn font-medium">
+                            Continue to Deduction <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Apply Deductions -->
+        <div id="step-3" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-minus-circle text-primary mr-3"></i>
+                        Step 3: Apply Session Deductions
+                    </h2>
+                    <p class="text-gray-600 mt-2">Deduct visits from member packages for matched sessions.</p>
+                </div>
+
+                <div class="p-6">
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                            <p class="text-3xl font-bold text-green-700" id="deduct-ready">0</p>
+                            <p class="text-sm text-green-600">Ready to Deduct</p>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <p class="text-3xl font-bold text-blue-700" id="deduct-free">0</p>
+                            <p class="text-sm text-blue-600">Free/Rookies</p>
+                        </div>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                            <p class="text-3xl font-bold text-yellow-700" id="deduct-unmatched">0</p>
+                            <p class="text-sm text-yellow-600">Unmatched (Skip)</p>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                            <p class="text-3xl font-bold text-red-700" id="deduct-nopackage">0</p>
+                            <p class="text-sm text-red-600">No Package (Skip)</p>
+                        </div>
+                        <div class="bg-primary-50 border border-purple-200 rounded-lg p-4 text-center">
+                            <p class="text-3xl font-bold text-primary" id="deduct-total">0</p>
+                            <p class="text-sm text-primary">Will Process</p>
+                        </div>
+                    </div>
+
+                    <!-- Deduction Preview by Member -->
+                    <div class="border rounded-lg overflow-hidden mb-6">
+                        <div class="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
+                            <h3 class="font-medium text-gray-700">Deduction Preview (by Member)</h3>
+                            <span class="text-sm text-gray-500" id="member-count">0 members</span>
+                        </div>
+                        <div class="overflow-x-auto" style="max-height: 300px;">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Member</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Package</th>
+                                        <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Sessions</th>
+                                        <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Before</th>
+                                        <th class="px-4 py-3 text-center text-sm font-medium text-gray-600"></th>
+                                        <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">After</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y" id="deduction-preview-table">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between items-center">
+                        <button onclick="goToStep(2)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Review
+                        </button>
+                        <div class="flex items-center gap-4">
+                            <button onclick="applyDeductions()" class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium" id="apply-btn">
+                                <i class="fas fa-check-double mr-2"></i> Apply Deductions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div id="deduction-success" class="hidden p-6 bg-green-50 border-t border-green-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-check-circle text-4xl text-green-600"></i>
+                            <div>
+                                <p class="text-lg font-bold text-green-800">Deductions Applied Successfully!</p>
+                                <p class="text-sm text-green-600" id="success-message"></p>
+                            </div>
+                        </div>
+                        <button onclick="goToStep(4)" class="px-6 py-3 text-white rounded-lg primary-btn font-medium">
+                            Handle Follow-Ups <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Follow-Up Queue -->
+        <div id="step-4" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                <i class="fas fa-clipboard-list text-primary mr-3"></i>
+                                Step 4: Follow-Up Queue
+                            </h2>
+                            <p class="text-gray-600 mt-1">Sessions that need resolution before counting toward revenue.</p>
+                        </div>
+                        <div class="flex gap-2" id="followup-badges">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Follow-up Table -->
+                <div class="overflow-x-auto" style="max-height: 400px;">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Date</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Member</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Service</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Value</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Issue</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y" id="followup-table">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-gray-50 border-t text-sm text-gray-500 text-center" id="followup-summary">
+                </div>
+
+                <!-- Actions -->
+                <div class="p-6 border-t flex justify-between items-center">
+                    <button onclick="goToStep(3)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <button onclick="goToStep(5)" class="px-6 py-3 text-white rounded-lg primary-btn font-medium">
+                            Continue to Revenue Split <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: Revenue Split -->
+        <div id="step-5" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-chart-pie text-primary mr-3"></i>
+                            Step 5: Revenue Split - December 2025
+                        </h2>
+                        <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                            <i class="fas fa-file-excel mr-2"></i> Export to Excel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="p-6 bg-primary-50 border-b">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-primary" id="rev-sessions">0</p>
+                            <p class="text-sm text-primary">Total Sessions</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-blue-700" id="rev-free">0</p>
+                            <p class="text-sm text-blue-600">Free/Rookies</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-green-700" id="rev-gross">$0</p>
+                            <p class="text-sm text-green-600">Gross Revenue</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-orange-700" id="rev-payroll">$0</p>
+                            <p class="text-sm text-orange-600">Trainer Payroll</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-primary" id="rev-profit">$0</p>
+                            <p class="text-sm text-primary">Gym Profit</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainer Breakdown -->
+                <div class="p-6">
+                    <h3 class="font-bold text-gray-700 mb-4">Trainer Earnings (Using Actual Split Percentages)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border rounded-lg overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Split %</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Sessions</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Comped</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Rookies</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Consult</th>
+                                    <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Gross Revenue</th>
+                                    <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Trainer Pay</th>
+                                    <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Gym Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y" id="revenue-table">
+                                <!-- Populated by JS -->
+                            </tbody>
+                            <tfoot class="bg-gray-100 font-medium" id="revenue-totals">
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Formula Notes -->
+                    <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-sm text-blue-800 font-medium mb-2"><i class="fas fa-calculator mr-2"></i>Revenue Split Formulas (from JR's Payroll Tracker):</p>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li><strong>Regular PT:</strong> Trainer gets 50-70% based on tier, gym keeps remainder</li>
+                            <li><strong>Comped:</strong> Trainer gets $15.05/hr (Oregon minimum wage) per session</li>
+                            <li><strong>Rookies:</strong> Always 50% split regardless of trainer tier</li>
+                            <li><strong>Consultations:</strong> $0 payout (tracking only)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pending Notice -->
+                    <div class="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg" id="pending-notice">
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="p-6 border-t flex justify-between items-center bg-gray-50">
+                    <button onclick="goToStep(4)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <button onclick="window.print()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white">
+                            <i class="fas fa-print mr-2"></i> Print Report
+                        </button>
+                        <button onclick="completeMonth()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                            <i class="fas fa-check mr-2"></i> Complete & Close Month
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Resolution Modal - UNMATCHED (Enter GMS Member ID) -->
+    <div id="resolve-modal-unmatched" class="fixed inset-0 hidden z-50">
+        <div class="modal-backdrop absolute inset-0" onclick="closeResolveModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+                <div class="p-6 border-b bg-yellow-50">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-link text-yellow-600 mr-2"></i>Link to GMS Member
+                            </h3>
+                            <p class="text-sm text-gray-600 mt-1" id="modal-unmatched-session-info"></p>
+                            <p class="text-sm text-yellow-700" id="modal-unmatched-trainer-info"></p>
+                        </div>
+                        <button onclick="closeResolveModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- Instructions -->
+                    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-sm text-blue-800">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>SetMore name doesn't match GMS.</strong> Look up this member in GMS and enter their Member ID below.
+                        </p>
+                    </div>
+
+                    <!-- SetMore Info (Read-only) -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Name in SetMore</label>
+                        <p class="text-lg font-medium text-gray-800" id="setmore-customer-name"></p>
+                    </div>
+
+                    <!-- GMS Member ID Input -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            GMS Member ID <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" id="gms-member-id"
+                                class="flex-1 border-2 border-gray-300 rounded-lg px-4 py-3 text-lg font-mono focus:border-purple-500 focus:outline-none"
+                                placeholder="e.g. 12345"
+                                pattern="[0-9]*"
+                                inputmode="numeric">
+                            <button onclick="lookupGmsMember()" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Enter the member's ID from GMS after looking them up</p>
+                    </div>
+
+                    <!-- Lookup Result (shown after search) -->
+                    <div id="gms-lookup-result" class="hidden mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-2xl text-green-600"></i>
+                            <div>
+                                <p class="font-medium text-green-800" id="gms-member-name">John Smith</p>
+                                <p class="text-sm text-green-600" id="gms-member-package">Gold 12-Pack • 8 visits remaining</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Future Prevention Tip -->
+                    <div class="mb-4 p-3 bg-gray-50 rounded-lg border">
+                        <p class="text-xs text-gray-600">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+                            <strong>Tip:</strong> Add <code class="bg-gray-200 px-1 rounded">GMS:12345</code> to the member's Notes field in SetMore to auto-match next time.
+                        </p>
+                    </div>
+                </div>
+                <div class="p-6 border-t bg-gray-50 flex justify-end gap-3">
+                    <button onclick="closeResolveModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white">Cancel</button>
+                    <button onclick="submitUnmatchedResolution()" class="px-6 py-2 text-white rounded-lg primary-btn font-medium">
+                        <i class="fas fa-link mr-2"></i> Link Member
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resolution Modal - NO PACKAGE (Choose Resolution Type) -->
+    <div id="resolve-modal-nopackage" class="fixed inset-0 hidden z-50">
+        <div class="modal-backdrop absolute inset-0" onclick="closeResolveModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+                <div class="p-6 border-b bg-red-50">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>Resolve No-Package Session
+                            </h3>
+                            <p class="text-sm text-gray-600 mt-1" id="modal-nopackage-session-info"></p>
+                            <p class="text-sm text-red-600" id="modal-nopackage-issue"></p>
+                        </div>
+                        <button onclick="closeResolveModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">How was this session handled?</label>
+                        <div class="space-y-2">
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'paid_single')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="paid_single" class="text-primary">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Paid for Single Session</p>
+                                        <p class="text-xs text-gray-500">Member paid $75 at time of session</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'package_purchased')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="package_purchased" class="text-primary">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Package Purchased</p>
+                                        <p class="text-xs text-gray-500">Member bought a new package - deduct this session from it</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'comp_authorized')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="comp_authorized" class="text-primary">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Comp - Authorized</p>
+                                        <p class="text-xs text-gray-500">Approved free session (intro, promo, make-good)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'comp_unauthorized')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="comp_unauthorized" class="text-primary">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Comp - Unauthorized</p>
+                                        <p class="text-xs text-gray-500">Trainer didn't verify package before session</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'writeoff')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="writeoff" class="text-primary">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Write-off</p>
+                                        <p class="text-xs text-gray-500">Unable to collect - eat the loss</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Trainer Credit</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="trainer_credit" value="full" class="text-primary">
+                                <span class="text-sm">Full credit (sessions & pay)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="trainer_credit" value="stats_only" class="text-primary">
+                                <span class="text-sm">Stats only (no pay)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="trainer_credit" value="none" class="text-primary" checked>
+                                <span class="text-sm">No credit</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                        <textarea id="resolution-notes" class="w-full border rounded-lg px-3 py-2 h-20" placeholder="Add context..."></textarea>
+                    </div>
+                </div>
+                <div class="p-6 border-t bg-gray-50 flex justify-end gap-3">
+                    <button onclick="closeResolveModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white">Cancel</button>
+                    <button onclick="submitNoPackageResolution()" class="px-6 py-2 text-white rounded-lg primary-btn font-medium">
+                        <i class="fas fa-check mr-2"></i> Resolve
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-4 px-6 text-center text-sm mt-8">
+        <p>G3 Sports & Fitness - Personal Training Portal | Demo v3.0 with Real December 2025 Data</p>
+    </footer>
+
+    <script>
+        // ===== PATH SELECTION =====
+        let selectedPath = null;
+
+        function selectPath(path) {
+            selectedPath = path;
+
+            // Hide path selection, show main workflow
+            document.getElementById('path-selection').classList.add('hidden');
+            document.getElementById('step-indicator').classList.remove('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+
+            // Update path badge based on selection
+            const badge = document.getElementById('selected-path-badge');
+            if (path === 'csv') {
+                badge.innerHTML = '<i class="fas fa-file-csv mr-1"></i> CSV Import';
+                badge.style.backgroundColor = '#e8f5e9';
+                badge.style.color = 'var(--success)';
+                goToStep(1); // Go to CSV import step
+            } else if (path === 'api') {
+                badge.innerHTML = '<i class="fas fa-plug mr-1"></i> API Direct';
+                badge.style.backgroundColor = '#e3f2fd';
+                badge.style.color = 'var(--accent)';
+                showApiFlow();
+            }
+        }
+
+        function showPathSelection() {
+            document.getElementById('path-selection').classList.remove('hidden');
+            document.getElementById('step-indicator').classList.add('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+        }
+
+        function requestApiAccess() {
+            const emailBody = encodeURIComponent(
+                'Hello,\\n\\n' +
+                'I am requesting API access for integration with our personal training management system.\\n\\n' +
+                'Business: Timberhill Athletic Club\\n' +
+                'Use Case: Month-end session reporting and revenue calculation for personal training management\\n\\n' +
+                'We would like to:\\n' +
+                '- Query appointments for specific date ranges\\n' +
+                '- Access customer, staff, and service details\\n' +
+                '- Filter by appointment status\\n\\n' +
+                'Please let me know the next steps for API access approval.\\n\\n' +
+                'Thank you!'
+            );
+
+            const mailtoLink = 'mailto:api@setmore.com?subject=API%20Access%20Request%20-%20Timberhill%20Athletic%20Club&body=' + emailBody;
+
+            if (confirm('This will open your email client to send an API access request to SetMore.\\n\\nEmail: api@setmore.com\\n\\nProceed?')) {
+                window.location.href = mailtoLink;
+            }
+        }
+
+        function showApiFlow() {
+            // Show API Direct flow - demonstrates what it would be like with API access
+            const step1Content = document.getElementById('step-1');
+            step1Content.innerHTML = `
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-plug mr-3" style="color: var(--accent);"></i>
+                        Step 1: Sync via SetMore API
+                    </h2>
+
+                    <!-- API PREVIEW NOTICE -->
+                    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-eye text-2xl text-blue-600 mt-1"></i>
+                            <div>
+                                <p class="font-bold text-blue-800 mb-2">Preview: This is what API Direct would look like</p>
+                                <p class="text-sm text-blue-700">
+                                    Once API access is approved, you'll have a seamless one-click sync experience
+                                    with <strong>complete data</strong> including session pricing.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OAuth Connection Status -->
+                    <div class="border rounded-lg p-6 mb-6" style="border-color: var(--success);">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: #e8f5e9;">
+                                    <i class="fas fa-link text-2xl" style="color: var(--success);"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">SetMore API Connection</p>
+                                    <p class="text-sm" style="color: var(--success);"><i class="fas fa-check-circle mr-1"></i> Authenticated via OAuth 2.0</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm" style="background-color: #e8f5e9; color: var(--success);">Connected</span>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 text-sm">
+                            <div class="bg-gray-50 rounded p-3">
+                                <p class="text-gray-500">Business</p>
+                                <p class="font-medium">Timberhill Athletic Club</p>
+                            </div>
+                            <div class="bg-gray-50 rounded p-3">
+                                <p class="text-gray-500">API Version</p>
+                                <p class="font-medium">v1 (OAuth)</p>
+                            </div>
+                            <div class="bg-gray-50 rounded p-3">
+                                <p class="text-gray-500">Last Sync</p>
+                                <p class="font-medium">Never (First sync)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sync Controls -->
+                    <div class="border rounded-lg p-6 mb-6">
+                        <h4 class="font-medium text-gray-800 mb-4"><i class="fas fa-calendar-alt mr-2"></i>Select Period to Sync</h4>
+
+                        <div class="flex items-center gap-4 mb-6">
+                            <select class="border rounded-lg px-4 py-2 text-lg font-medium" id="api-month-select">
+                                <option value="12-2025" selected>December 2025</option>
+                                <option value="11-2025">November 2025</option>
+                                <option value="10-2025">October 2025</option>
+                            </select>
+                            <button onclick="simulateApiSync()" class="px-8 py-3 text-white rounded-lg text-lg font-medium" style="background-color: var(--accent);" id="api-sync-btn">
+                                <i class="fas fa-sync mr-2"></i> Sync Sessions
+                            </button>
+                        </div>
+
+                        <!-- API Request Preview -->
+                        <div class="mb-2 flex items-center gap-2">
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">
+                                <i class="fas fa-eye-slash mr-1"></i>BEHIND THE SCENES
+                            </span>
+                            <span class="text-xs text-gray-500">API request sent when you click Sync - happens automatically</span>
+                        </div>
+                        <div class="bg-gray-900 rounded-lg p-4 text-sm font-mono text-gray-300">
+                            <p class="text-gray-500 mb-2">// API Request:</p>
+                            <p><span class="text-green-400">GET</span> <span class="text-blue-400">/api/v1/bookingapi/appointments</span></p>
+                            <p class="text-gray-500 mt-2">// Parameters:</p>
+                            <p>  startDate: <span class="text-yellow-400">"2025-12-01"</span></p>
+                            <p>  endDate: <span class="text-yellow-400">"2025-12-31"</span></p>
+                            <p>  status: <span class="text-yellow-400">"Confirmed"</span></p>
+                        </div>
+                    </div>
+
+                    <!-- API Response Preview (hidden until sync) -->
+                    <div id="api-response-preview" class="hidden border rounded-lg p-6 mb-6" style="border-color: var(--success);">
+                        <h4 class="font-medium text-gray-800 mb-4">
+                            <i class="fas fa-check-circle mr-2" style="color: var(--success);"></i>
+                            API Response Received
+                        </h4>
+
+                        <div class="grid grid-cols-4 gap-4 text-center mb-4">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-3xl font-bold" style="color: var(--primary);">554</p>
+                                <p class="text-sm text-gray-500">Confirmed Sessions</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-3xl font-bold" style="color: var(--primary);">195</p>
+                                <p class="text-sm text-gray-500">Unique Customers</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-3xl font-bold" style="color: var(--primary);">9</p>
+                                <p class="text-sm text-gray-500">Trainers</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-3xl font-bold" style="color: var(--success);">✓</p>
+                                <p class="text-sm text-gray-500">Cost Data Included</p>
+                            </div>
+                        </div>
+
+                        <!-- Behind the Scenes: API Response -->
+                        <div class="mb-2 flex items-center gap-2">
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">
+                                <i class="fas fa-eye-slash mr-1"></i>BEHIND THE SCENES
+                            </span>
+                            <span class="text-xs text-gray-500">This JSON data flows automatically - users won't see this</span>
+                        </div>
+                        <div class="bg-gray-900 rounded-lg p-4 text-sm font-mono text-gray-300 max-h-48 overflow-y-auto">
+                            <p class="text-gray-500">// API Response (first 2 of 554 appointments):</p>
+                            <pre class="text-xs">{
+  "appointments": [
+    {
+      "appointment_id": "apt_dec001",
+      "date": "2025-12-01",
+      "time": "09:00",
+      "customer": "Keven Malkewitz",
+      "staff": "Mason Morgan",
+      "service": "Private Training | Executive Package - 20x30 min.",
+      <span class="text-green-400">"cost": 30.00</span>,  // ✓ INCLUDED!
+      "status": "Confirmed"
+    },
+    {
+      "appointment_id": "apt_dec002",
+      "date": "2025-12-01",
+      "time": "10:00",
+      "customer": "John Ritchie",
+      "staff": "Kyra Schulties",
+      "service": "Personal Coaching | Progress Package - 8x60 min.",
+      <span class="text-green-400">"cost": 66.00</span>,  // ✓ INCLUDED!
+      "status": "Confirmed"
+    }
+    // ... 552 more
+  ]
+}</pre>
+                        </div>
+
+                        <div class="mt-4 flex gap-4">
+                            <button onclick="processApiData()" class="px-6 py-3 text-white rounded-lg font-medium" style="background-color: var(--success);">
+                                <i class="fas fa-arrow-right mr-2"></i> Process Sessions
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- API vs CSV Comparison -->
+                    <div class="grid grid-cols-2 gap-4 mb-6 max-w-xl mx-auto">
+                        <div class="border rounded-lg p-4 bg-gray-50 opacity-60">
+                            <h5 class="font-medium text-gray-600 mb-2"><i class="fas fa-file-csv mr-2"></i>CSV Import</h5>
+                            <ul class="text-xs text-gray-500 space-y-1">
+                                <li>• Manual export from SetMore</li>
+                                <li>• Find and upload file</li>
+                                <li>• ~10 minutes/month</li>
+                            </ul>
+                        </div>
+                        <div class="border rounded-lg p-4" style="background-color: #e3f2fd; border-color: var(--accent);">
+                            <h5 class="font-medium mb-2" style="color: var(--accent);"><i class="fas fa-plug mr-2"></i>API Direct ✓</h5>
+                            <ul class="text-xs space-y-1" style="color: var(--primary);">
+                                <li>• One click sync</li>
+                                <li>• Complete data with cost ✓</li>
+                                <li>• No file handling</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Back to Path Selection -->
+                    <div class="border-t pt-4">
+                        <button onclick="showPathSelection()" class="text-gray-500 hover:text-gray-700 text-sm">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Integration Options
+                        </button>
+                    </div>
+                </div>
+            `;
+            goToStep(1);
+        }
+
+        function simulateApiSync() {
+            const btn = document.getElementById('api-sync-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Connecting to SetMore API...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-download mr-2"></i> Fetching appointments...';
+            }, 800);
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Sync Complete!';
+                btn.style.backgroundColor = 'var(--success)';
+                document.getElementById('api-response-preview').classList.remove('hidden');
+            }, 2000);
+        }
+
+        function processApiData() {
+            // Load demo data with full cost data (unlike Zapier)
+            expandDemoData();
+            sessions = [...DEMO_SESSIONS];
+            goToStep(2);
+            renderSessionsTable();
+            updateCounts();
+        }
+
+        function showWorkflowExplainer() {
+            // Show workflow explanation modal for developer Dave
+            const modal = document.createElement('div');
+            modal.id = 'workflow-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                    <div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-info-circle mr-2" style="color: var(--primary);"></i>
+                            PT Portal Workflow Explained
+                        </h2>
+                        <button onclick="document.getElementById('workflow-modal').remove()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+
+                    <div class="p-6">
+                        <!-- For Dave Banner -->
+                        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p class="font-medium text-blue-800"><i class="fas fa-user-cog mr-2"></i>For Developer Context</p>
+                            <p class="text-sm text-blue-700">This explains the PT session workflow that JR (Lead Trainer) does manually at month-end. The goal of PT Portal is to streamline this process.</p>
+                        </div>
+
+                        <!-- The Problem -->
+                        <div class="mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 text-lg"><i class="fas fa-exclamation-triangle mr-2 text-orange-500"></i>The Current Problem (JR's Pain)</h3>
+                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                                <p class="text-sm text-gray-700 mb-3">Personal training sessions are <strong>booked in SetMore</strong> but <strong>billed/tracked in GMS</strong>. These systems don't talk to each other.</p>
+                                <p class="text-sm font-medium text-gray-700 mb-2">At month-end, JR must manually:</p>
+                                <ol class="list-decimal list-inside text-sm text-gray-700 space-y-2">
+                                    <li><strong>Print out</strong> the session list from SetMore</li>
+                                    <li><strong>Find each member ONE BY ONE in GMS by name</strong> (no ID linking!)</li>
+                                    <li><strong>Manually subtract sessions</strong> from each member's PT package in GMS</li>
+                                    <li><strong>Calculate revenue splits</strong> for each trainer in a separate spreadsheet</li>
+                                    <li><strong>Get the final report to Beth</strong> (payroll) by the 2nd of the month</li>
+                                </ol>
+                                <p class="text-sm text-orange-700 mt-3 font-medium"><i class="fas fa-clock mr-1"></i> Meanwhile, trainers must manually confirm a member has sessions available before training them.</p>
+                            </div>
+                        </div>
+
+                        <!-- Key Challenge -->
+                        <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                            <p class="font-medium text-purple-800 mb-2"><i class="fas fa-puzzle-piece mr-2"></i>Key Challenge to Solve</p>
+                            <p class="text-sm text-purple-700">SetMore customers are matched by <strong>name only</strong>. For automation, we need to store the <strong>GMS Member ID</strong> in SetMore somehow (custom field, notes, etc.) to enable reliable matching.</p>
+                        </div>
+
+                        <!-- Systems Involved -->
+                        <div class="mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 text-lg"><i class="fas fa-sitemap mr-2" style="color: var(--primary);"></i>Systems Involved</h3>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="border rounded-lg p-4 text-center">
+                                    <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-purple-100 flex items-center justify-center">
+                                        <i class="fas fa-calendar-check text-xl text-purple-600"></i>
+                                    </div>
+                                    <p class="font-medium">SetMore</p>
+                                    <p class="text-xs text-gray-500">PT Booking System</p>
+                                    <p class="text-xs text-gray-400 mt-1">Trainers schedule sessions here</p>
+                                </div>
+                                <div class="border rounded-lg p-4 text-center">
+                                    <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-database text-xl text-green-600"></i>
+                                    </div>
+                                    <p class="font-medium">GMS</p>
+                                    <p class="text-xs text-gray-500">Gym Management Solutions</p>
+                                    <p class="text-xs text-gray-400 mt-1">Member database, billing, check-in</p>
+                                </div>
+                                <div class="border rounded-lg p-4 text-center" style="border-color: var(--primary);">
+                                    <div class="w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center" style="background-color: #e8f5e9;">
+                                        <i class="fas fa-exchange-alt text-xl" style="color: var(--primary);"></i>
+                                    </div>
+                                    <p class="font-medium" style="color: var(--primary);">PT Portal</p>
+                                    <p class="text-xs text-gray-500">NEW - This Tool</p>
+                                    <p class="text-xs text-gray-400 mt-1">Bridges the gap</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PT Portal Workflow Steps -->
+                        <div class="mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 text-lg"><i class="fas fa-tasks mr-2" style="color: var(--primary);"></i>PT Portal Workflow (What This Demo Shows)</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--primary);">1</div>
+                                    <div>
+                                        <p class="font-medium">Import Sessions</p>
+                                        <p class="text-sm text-gray-600">Load session data from SetMore (via CSV upload or direct API)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--primary);">2</div>
+                                    <div>
+                                        <p class="font-medium">Review & Match</p>
+                                        <p class="text-sm text-gray-600">Review sessions, auto-match SetMore customers to GMS members, flag issues</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--primary);">3</div>
+                                    <div>
+                                        <p class="font-medium">Deduct from Packages</p>
+                                        <p class="text-sm text-gray-600">Mark sessions to deduct from GMS package balances</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--primary);">4</div>
+                                    <div>
+                                        <p class="font-medium">Follow-Up List</p>
+                                        <p class="text-sm text-gray-600">Generate list of members who need new packages, failed payments, etc.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--primary);">5</div>
+                                    <div>
+                                        <p class="font-medium">Revenue Report</p>
+                                        <p class="text-sm text-gray-600">Calculate trainer revenue splits (50-70%) for Beth/payroll by the 2nd</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: var(--primary);">6</div>
+                                    <div>
+                                        <p class="font-medium">PT Dashboards</p>
+                                        <p class="text-sm text-gray-600">View KPIs: session counts, revenue by trainer, package utilization, trends</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Business Rules -->
+                        <div class="mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 text-lg"><i class="fas fa-gavel mr-2 text-orange-500"></i>Key PT Business Rules</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium text-sm mb-1">Trainer Revenue Splits</p>
+                                    <p class="text-xs text-gray-600">Senior trainers: 70% of session value</p>
+                                    <p class="text-xs text-gray-600">Rookie trainers: 50% of session value</p>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium text-sm mb-1">Non-Member Surcharge</p>
+                                    <p class="text-xs text-gray-600">If PT client is NOT a gym member, add $7/session</p>
+                                    <p class="text-xs text-gray-400">(Currently handled manually by trainers)</p>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium text-sm mb-1">Comped Sessions</p>
+                                    <p class="text-xs text-gray-600">Sessions marked $0 (comps/trades) pay trainer Oregon min wage: $15.05/session</p>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium text-sm mb-1">Package Deductions</p>
+                                    <p class="text-xs text-gray-600">Members buy PT packages in GMS (e.g., 8-pack). Each session should deduct 1.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sticky bottom-0 bg-gray-50 border-t p-4 flex justify-end">
+                        <button onclick="document.getElementById('workflow-modal').remove()" class="px-6 py-2 rounded-lg text-white font-medium" style="background-color: var(--primary);">Got It</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // ===== TRAINER DATA (from JR's Payroll Tracker) =====
+        const TRAINERS = {
+            'Josiah Iwamizu': { split: 0.70, name: 'Josiah' },
+            'JR Prieto-Romero': { split: 0.70, name: 'JR' },
+            'Mason Morgan': { split: 0.70, name: 'Mason' },
+            'Kyra Schulties': { split: 0.70, name: 'Kyra' },
+            'Becca Reeve': { split: 0.70, name: 'Becca' },
+            'Conner McAdams': { split: 0.50, name: 'Conner' },
+            'Jess Caze': { split: 0.50, name: 'Jess' },
+            'Steve Sackmann': { split: 0.70, name: 'Steve' },
+            'Jayna Davis': { split: 0.50, name: 'Jayna' }
+        };
+
+        const COMPED_SESSION_RATE = 15.05; // Oregon Standard minimum wage (effective 7/1/2025)
+        const ROOKIES_SPLIT = 0.50;
+
+        // ===== DECEMBER 2025 SESSION DATA (Real from SetMore) =====
+        // This is a representative sample - full data would be loaded from JSON
+        const DEMO_SESSIONS = [
+            // Josiah - 143 sessions
+            { date: '12/01/2025', customer: 'Keven Malkewitz', trainer: 'Mason Morgan', service: 'Private Training | Executive Package - 20x30 min.', cost: 30, status: 'ready' },
+            { date: '12/01/2025', customer: 'John Ritchie', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 66, status: 'ready' },
+            { date: '12/01/2025', customer: 'Colleen Bee', trainer: 'Mason Morgan', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/01/2025', customer: 'Emma Sloan', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 64, status: 'ready' },
+            { date: '12/01/2025', customer: 'Chelsea', trainer: 'Kyra Schulties', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/01/2025', customer: 'Race Packer', trainer: 'Josiah Iwamizu', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/02/2025', customer: 'Jen Akeroyd', trainer: 'JR Prieto-Romero', service: 'Hybrid Coaching | Full Coaching System: 6-Month (Weekly)', cost: 80.75, status: 'ready' },
+            { date: '12/02/2025', customer: 'Belen Smith', trainer: 'Josiah Iwamizu', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/02/2025', customer: 'Veronica Johnson', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/02/2025', customer: 'Linda Braun', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/02/2025', customer: 'Rickey Calhoun', trainer: 'JR Prieto-Romero', service: 'Hybrid Coaching | Full Coaching System: 3-Month (Weekly)', cost: 80.75, status: 'ready' },
+            { date: '12/02/2025', customer: 'Janie Woodside', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/02/2025', customer: 'Naghmeh Akhavan Heidari', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/02/2025', customer: 'Susie Woodside', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/03/2025', customer: 'Gale Read', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/03/2025', customer: 'Ken Walrod', trainer: 'Kyra Schulties', service: 'Personal Coaching | Starter Package - 4x60 min.', cost: 73, status: 'ready' },
+            { date: '12/03/2025', customer: 'Dawn Duerksen', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            // Comped Sessions (paid at minimum wage)
+            { date: '12/03/2025', customer: 'Marlene Hawk', trainer: 'Josiah Iwamizu', service: 'Comped Session', cost: 0, status: 'comped' },
+            { date: '12/05/2025', customer: 'New Client Test', trainer: 'Kyra Schulties', service: 'Comped Session - Trial', cost: 0, status: 'comped' },
+            { date: '12/08/2025', customer: 'Prospect Demo', trainer: 'Mason Morgan', service: 'Comped Session - Makeup', cost: 0, status: 'comped' },
+            // Rookies Training
+            { date: '12/04/2025', customer: 'Henry Leavitt', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            { date: '12/04/2025', customer: 'Gerardo Martinez', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            { date: '12/04/2025', customer: 'Fox Harrison', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            { date: '12/04/2025', customer: 'Dominic Munoz', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            { date: '12/04/2025', customer: 'Munir Mahmud', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            { date: '12/04/2025', customer: 'Calex Harrison', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            { date: '12/11/2025', customer: 'Kyrie Dunn', trainer: 'Josiah Iwamizu', service: 'Timberhill Rookies', cost: 15, status: 'rookies' },
+            // Unmatched members (no GMS ID)
+            { date: '12/05/2025', customer: 'Unknown Guest 1', trainer: 'Becca Reeve', service: 'Personal Coaching | Starter Package - 4x60 min.', cost: 73, status: 'unmatched' },
+            { date: '12/10/2025', customer: 'Walk In Client', trainer: 'Mason Morgan', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 66, status: 'unmatched' },
+            { date: '12/15/2025', customer: 'J. Smith (Guest)', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'unmatched' },
+            // No Package members
+            { date: '12/06/2025', customer: 'Bob Anderson', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'nopackage', issue: 'Package Expired' },
+            { date: '12/12/2025', customer: 'Tom Baker', trainer: 'Becca Reeve', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'nopackage', issue: 'No Package' },
+            { date: '12/18/2025', customer: 'Susan Miller', trainer: 'Mason Morgan', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 66, status: 'nopackage', issue: 'Visits Exhausted' },
+            { date: '12/20/2025', customer: 'Dave Wilson', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'nopackage', issue: 'No Package' },
+            // More regular sessions for realistic counts
+            { date: '12/05/2025', customer: 'Andy Larkin', trainer: 'Mason Morgan', service: 'Hybrid Coaching | Full Coaching System: 6-Month (Weekly)', cost: 54.5, status: 'ready' },
+            { date: '12/05/2025', customer: 'Kevin Johnsrude', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/05/2025', customer: 'Julie Forrest', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/06/2025', customer: 'Timothy Cappadona', trainer: 'Josiah Iwamizu', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 66, status: 'ready' },
+            { date: '12/06/2025', customer: 'Chloe Stewart', trainer: 'Becca Reeve', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/06/2025', customer: 'Michelle Hayes', trainer: 'Josiah Iwamizu', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/07/2025', customer: 'Joseph Beckman', trainer: 'Mason Morgan', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/07/2025', customer: 'Joe Klopfenstein', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/08/2025', customer: 'Bob Moscati', trainer: 'Kyra Schulties', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 62, status: 'ready' },
+            { date: '12/08/2025', customer: 'Lillian', trainer: 'Kyra Schulties', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 71, status: 'ready' },
+            { date: '12/08/2025', customer: 'Karen Barker', trainer: 'Becca Reeve', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/09/2025', customer: 'Alix Gitelman', trainer: 'Becca Reeve', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65, status: 'ready' },
+            { date: '12/09/2025', customer: 'Jill James', trainer: 'Becca Reeve', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 60, status: 'ready' },
+            { date: '12/09/2025', customer: 'Amanda Beer', trainer: 'JR Prieto-Romero', service: 'Hybrid Coaching | Full Coaching System: 3-Month (Weekly)', cost: 85.75, status: 'ready' },
+            { date: '12/10/2025', customer: 'Marjorie Sandor', trainer: 'Mason Morgan', service: 'Hybrid Coaching | Full Coaching System: 3-Month (Weekly)', cost: 85.75, status: 'ready' },
+            { date: '12/10/2025', customer: 'Craig Greenwald', trainer: 'Mason Morgan', service: 'Performance Lab', cost: 20, status: 'ready' },
+            { date: '12/10/2025', customer: 'Curtis Bradford', trainer: 'Josiah Iwamizu', service: 'Private Training | Executive Package - 20x30 min.', cost: 31, status: 'ready' },
+            { date: '12/11/2025', customer: 'CYNTHIA RODRIGUEZ', trainer: 'Kyra Schulties', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 66, status: 'ready' },
+            { date: '12/11/2025', customer: 'Michelle Anderson', trainer: 'Josiah Iwamizu', service: 'Private Training | Executive Package - 20x30 min.', cost: 30, status: 'ready' },
+            { date: '12/11/2025', customer: 'Nathan Marshall', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/12/2025', customer: 'Talia Schwartz', trainer: 'Kyra Schulties', service: 'Private Training | Progress Package - 8x30 min.', cost: 39, status: 'ready' },
+            { date: '12/12/2025', customer: 'Victoria Joines', trainer: 'Kyra Schulties', service: 'Private Training | Progress Package - 8x30 min.', cost: 41, status: 'ready' },
+            { date: '12/12/2025', customer: 'Shelley Starkey', trainer: 'Becca Reeve', service: 'Personal Coaching | Executive Package - 20x60 min.', cost: 60, status: 'ready' },
+            { date: '12/13/2025', customer: 'Andrea Vogelsang', trainer: 'Becca Reeve', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/13/2025', customer: 'Cheslah Barkdoll', trainer: 'JR Prieto-Romero', service: 'Personal Coaching | Signature Package - 12x60 min.', cost: 69, status: 'ready' },
+            { date: '12/14/2025', customer: 'Zhengyang Zhou', trainer: 'Conner McAdams', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 73, status: 'ready' },
+            { date: '12/14/2025', customer: 'John Henry Ruiz', trainer: 'Mason Morgan', service: 'Personal Coaching | Progress Package - 8x60 min.', cost: 66, status: 'ready' },
+            // Consultations
+            { date: '12/08/2025', customer: 'New Lead 1', trainer: 'JR Prieto-Romero', service: 'Consultation', cost: 0, status: 'consultation' },
+            { date: '12/15/2025', customer: 'New Lead 2', trainer: 'Josiah Iwamizu', service: 'Consultation', cost: 0, status: 'consultation' },
+            { date: '12/18/2025', customer: 'New Lead 3', trainer: 'Kyra Schulties', service: 'Consultation', cost: 0, status: 'consultation' },
+        ];
+
+        // Expand to realistic session count (~554)
+        function expandDemoData() {
+            const baseCustomers = [
+                'John Smith', 'Sarah Johnson', 'Mike Williams', 'Emily Davis', 'Chris Brown',
+                'Jessica Wilson', 'David Lee', 'Ashley Taylor', 'Ryan Anderson', 'Amanda Thomas'
+            ];
+            const trainers = Object.keys(TRAINERS);
+            const services = [
+                { name: 'Personal Coaching | Signature Package - 12x60 min.', cost: 64 },
+                { name: 'Personal Coaching | Progress Package - 8x60 min.', cost: 66 },
+                { name: 'Personal Coaching | Executive Package - 20x60 min.', cost: 65 },
+                { name: 'Personal Coaching | Starter Package - 4x60 min.', cost: 73 },
+                { name: 'Hybrid Coaching | Full Coaching System: 3-Month (Weekly)', cost: 85 }
+            ];
+
+            // Add more sessions to reach ~554
+            for (let i = 0; i < 500; i++) {
+                const day = Math.floor(Math.random() * 31) + 1;
+                const date = `12/${day.toString().padStart(2, '0')}/2025`;
+                const customer = baseCustomers[Math.floor(Math.random() * baseCustomers.length)] + ' ' + (i + 100);
+                const trainer = trainers[Math.floor(Math.random() * trainers.length)];
+                const service = services[Math.floor(Math.random() * services.length)];
+
+                // 82% ready, 5% unmatched, 5% no package, 3% comped, 3% rookies, 2% consultation
+                let status = 'ready';
+                const rand = Math.random();
+                if (rand > 0.98) status = 'consultation';
+                else if (rand > 0.95) status = 'rookies';
+                else if (rand > 0.92) status = 'comped';
+                else if (rand > 0.87) status = 'nopackage';
+                else if (rand > 0.82) status = 'unmatched';
+
+                DEMO_SESSIONS.push({
+                    date,
+                    customer,
+                    trainer,
+                    service: service.name,
+                    cost: service.cost + Math.floor(Math.random() * 10),
+                    status,
+                    issue: status === 'nopackage' ? 'No Package' : undefined
+                });
+            }
+        }
+
+        // ===== STATE =====
+        let sessions = [];
+        let currentStep = 1;
+        let deductionsApplied = false;
+
+        // ===== INITIALIZATION =====
+        function init() {
+            goToStep(1);
+        }
+
+        function loadDemoData() {
+            expandDemoData();
+            sessions = [...DEMO_SESSIONS];
+            document.getElementById('file-preview').classList.remove('hidden');
+            document.getElementById('file-name').textContent = 'Complete_December_Setmore Report.xlsx';
+            document.getElementById('session-count').textContent = sessions.length + ' confirmed sessions found';
+        }
+
+        function processImport() {
+            if (sessions.length === 0) {
+                loadDemoData();
+            }
+            goToStep(2);
+            renderSessionsTable();
+            updateCounts();
+        }
+
+        function handleFileUpload(input) {
+            if (input.files.length > 0) {
+                loadDemoData();
+            }
+        }
+
+        // ===== STEP NAVIGATION =====
+        function goToStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('step-' + step).classList.remove('hidden');
+
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById('step-btn-' + i);
+                btn.classList.remove('active', 'completed');
+                if (i < step) btn.classList.add('completed');
+                else if (i === step) btn.classList.add('active');
+            }
+            currentStep = step;
+
+            if (step === 2) renderSessionsTable();
+            if (step === 3) renderDeductionPreview();
+            if (step === 4) renderFollowUpTable();
+            if (step === 5) renderRevenueReport();
+        }
+
+        // ===== STEP 2: REVIEW =====
+        function renderSessionsTable() {
+            const tbody = document.getElementById('sessions-table');
+            const filtered = getFilteredSessions();
+
+            tbody.innerHTML = filtered.slice(0, 100).map(s => {
+                const rowClass = s.status === 'unmatched' ? 'warning-row' :
+                               s.status === 'nopackage' ? 'error-row' : '';
+                const statusBadge = getStatusBadge(s.status, s.issue);
+                const shortService = s.service.split('|').pop().trim().substring(0, 25);
+
+                return `
+                    <tr class="table-row ${rowClass}" data-status="${s.status}">
+                        <td class="px-4 py-3 text-sm">${s.date}</td>
+                        <td class="px-4 py-3 text-sm font-medium">${s.customer}</td>
+                        <td class="px-4 py-3 text-sm">${getMatchDisplay(s)}</td>
+                        <td class="px-4 py-3 text-sm">${TRAINERS[s.trainer]?.name || s.trainer}</td>
+                        <td class="px-4 py-3 text-sm text-xs">${shortService}</td>
+                        <td class="px-4 py-3 text-sm text-right">$${s.cost.toFixed(2)}</td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('table-summary').textContent =
+                `Showing ${Math.min(100, filtered.length)} of ${filtered.length} sessions`;
+        }
+
+        function getMatchDisplay(session) {
+            if (session.status === 'unmatched') {
+                return `<span class="text-yellow-600"><i class="fas fa-question-circle mr-1"></i>No match</span>`;
+            }
+            return `<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>Matched</span>`;
+        }
+
+        function getStatusBadge(status, issue) {
+            const badges = {
+                'ready': '<span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Ready</span>',
+                'unmatched': '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs"><i class="fas fa-question-circle mr-1"></i>Unmatched</span>',
+                'nopackage': `<span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs"><i class="fas fa-exclamation-triangle mr-1"></i>${issue || 'No Package'}</span>`,
+                'free': '<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"><i class="fas fa-gift mr-1"></i>Free</span>',
+                'rookies': '<span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs"><i class="fas fa-users mr-1"></i>Rookies</span>',
+                'consultation': '<span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs"><i class="fas fa-comments mr-1"></i>Consult</span>'
+            };
+            return badges[status] || badges['ready'];
+        }
+
+        let currentFilter = 'all';
+        function filterSessions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('filter-' + filter).classList.add('active');
+            renderSessionsTable();
+        }
+
+        function getFilteredSessions() {
+            if (currentFilter === 'all') return sessions;
+            return sessions.filter(s => s.status === currentFilter);
+        }
+
+        function updateCounts() {
+            const counts = {
+                all: sessions.length,
+                ready: sessions.filter(s => s.status === 'ready').length,
+                unmatched: sessions.filter(s => s.status === 'unmatched').length,
+                nopackage: sessions.filter(s => s.status === 'nopackage').length,
+                comped: sessions.filter(s => s.status === 'comped').length,
+                rookies: sessions.filter(s => s.status === 'rookies').length,
+                consultation: sessions.filter(s => s.status === 'consultation').length
+            };
+
+            document.getElementById('count-all').textContent = counts.all;
+            document.getElementById('count-ready').textContent = counts.ready;
+            document.getElementById('count-unmatched').textContent = counts.unmatched;
+            document.getElementById('count-nopackage').textContent = counts.nopackage;
+            document.getElementById('count-comped').textContent = counts.comped;
+            document.getElementById('count-rookies').textContent = counts.rookies;
+            document.getElementById('count-consultation').textContent = counts.consultation;
+            document.getElementById('total-sessions-display').textContent = counts.all;
+            document.getElementById('issues-count').textContent =
+                `${counts.unmatched + counts.nopackage} issues need attention`;
+        }
+
+        // ===== STEP 3: DEDUCTIONS =====
+        function renderDeductionPreview() {
+            const ready = sessions.filter(s => s.status === 'ready').length;
+            const comped = sessions.filter(s => s.status === 'comped').length;
+            const rookies = sessions.filter(s => s.status === 'rookies').length;
+            const consultation = sessions.filter(s => s.status === 'consultation').length;
+            const unmatched = sessions.filter(s => s.status === 'unmatched').length;
+            const nopackage = sessions.filter(s => s.status === 'nopackage').length;
+            const processable = ready + comped + rookies + consultation;
+
+            document.getElementById('deduct-ready').textContent = ready;
+            document.getElementById('deduct-free').textContent = comped + rookies + consultation;
+            document.getElementById('deduct-unmatched').textContent = unmatched;
+            document.getElementById('deduct-nopackage').textContent = nopackage;
+            document.getElementById('deduct-total').textContent = processable;
+            document.getElementById('apply-btn').innerHTML =
+                `<i class="fas fa-check-double mr-2"></i> Apply ${processable} Deductions`;
+
+            // Group by member
+            const byMember = {};
+            sessions.filter(s => s.status === 'ready').forEach(s => {
+                if (!byMember[s.customer]) byMember[s.customer] = { sessions: 0, service: s.service };
+                byMember[s.customer].sessions++;
+            });
+
+            const tbody = document.getElementById('deduction-preview-table');
+            tbody.innerHTML = Object.entries(byMember).slice(0, 20).map(([name, data]) => {
+                const before = Math.floor(Math.random() * 8) + data.sessions;
+                const after = before - data.sessions;
+                const shortService = data.service.split('|').pop().trim().substring(0, 20);
+                return `
+                    <tr>
+                        <td class="px-4 py-3 text-sm font-medium">${name}</td>
+                        <td class="px-4 py-3 text-sm text-xs">${shortService}</td>
+                        <td class="px-4 py-3 text-sm text-center">${data.sessions}</td>
+                        <td class="px-4 py-3 text-sm text-center">${before}</td>
+                        <td class="px-4 py-3 text-center"><i class="fas fa-arrow-right text-gray-400"></i></td>
+                        <td class="px-4 py-3 text-sm text-center font-medium ${after <= 2 ? 'text-orange-600' : 'text-green-600'}">${after}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('member-count').textContent = Object.keys(byMember).length + ' members';
+        }
+
+        function applyDeductions() {
+            deductionsApplied = true;
+            document.getElementById('deduction-success').classList.remove('hidden');
+            const count = sessions.filter(s => s.status === 'ready' || ['free', 'rookies'].includes(s.status)).length;
+            document.getElementById('success-message').textContent =
+                `${count} sessions processed from member packages`;
+        }
+
+        // ===== STEP 4: FOLLOW-UP =====
+        function renderFollowUpTable() {
+            const followups = sessions.filter(s => s.status === 'unmatched' || s.status === 'nopackage');
+
+            document.getElementById('followup-badges').innerHTML = `
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">${sessions.filter(s => s.status === 'unmatched').length} Unmatched</span>
+                <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">${sessions.filter(s => s.status === 'nopackage').length} No Package</span>
+            `;
+
+            const tbody = document.getElementById('followup-table');
+            tbody.innerHTML = followups.slice(0, 30).map(s => {
+                const rowClass = s.status === 'unmatched' ? 'warning-row' : 'error-row';
+                const issueBadge = s.status === 'unmatched'
+                    ? '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">Unmatched</span>'
+                    : `<span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">${s.issue || 'No Package'}</span>`;
+                const shortService = s.service.split('|').pop().trim().substring(0, 20);
+
+                return `
+                    <tr class="table-row ${rowClass}">
+                        <td class="px-4 py-3 text-sm">${s.date}</td>
+                        <td class="px-4 py-3 text-sm font-medium">${s.customer}</td>
+                        <td class="px-4 py-3 text-sm">${TRAINERS[s.trainer]?.name || s.trainer}</td>
+                        <td class="px-4 py-3 text-sm text-xs">${shortService}</td>
+                        <td class="px-4 py-3 text-sm text-right">$${s.cost.toFixed(2)}</td>
+                        <td class="px-4 py-3">${issueBadge}</td>
+                        <td class="px-4 py-3">
+                            <button onclick="openResolveModal('${s.customer}', '${s.date}', '${s.trainer}', '${s.status}', '${s.issue || ''}')"
+                                class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                <i class="fas fa-wrench mr-1"></i> Resolve
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('followup-summary').textContent =
+                `${followups.length} sessions need resolution`;
+        }
+
+        // ===== STEP 5: REVENUE =====
+        function renderRevenueReport() {
+            const processedSessions = sessions.filter(s =>
+                s.status === 'ready' || ['comped', 'rookies', 'consultation'].includes(s.status)
+            );
+            const pendingSessions = sessions.filter(s =>
+                s.status === 'unmatched' || s.status === 'nopackage'
+            );
+
+            // Calculate by trainer
+            const trainerStats = {};
+            Object.keys(TRAINERS).forEach(t => {
+                trainerStats[t] = { sessions: 0, comped: 0, rookies: 0, consultation: 0, gross: 0, pay: 0 };
+            });
+
+            processedSessions.forEach(s => {
+                const trainer = s.trainer;
+                if (!trainerStats[trainer]) {
+                    trainerStats[trainer] = { sessions: 0, comped: 0, rookies: 0, consultation: 0, gross: 0, pay: 0 };
+                }
+
+                if (s.status === 'comped') {
+                    trainerStats[trainer].comped++;
+                    trainerStats[trainer].pay += COMPED_SESSION_RATE; // minimum wage
+                } else if (s.status === 'rookies') {
+                    trainerStats[trainer].rookies++;
+                    trainerStats[trainer].gross += s.cost;
+                    trainerStats[trainer].pay += s.cost * ROOKIES_SPLIT;
+                } else if (s.status === 'consultation') {
+                    trainerStats[trainer].consultation++;
+                    // Consultations: $0 payout, tracking only
+                } else {
+                    trainerStats[trainer].sessions++;
+                    trainerStats[trainer].gross += s.cost;
+                    const split = TRAINERS[trainer]?.split || 0.50;
+                    trainerStats[trainer].pay += s.cost * split;
+                }
+            });
+
+            // Calculate totals
+            let totalSessions = 0, totalComped = 0, totalRookies = 0, totalConsult = 0, totalGross = 0, totalPay = 0;
+            Object.values(trainerStats).forEach(t => {
+                totalSessions += t.sessions;
+                totalComped += t.comped;
+                totalRookies += t.rookies;
+                totalConsult += t.consultation;
+                totalGross += t.gross;
+                totalPay += t.pay;
+            });
+
+            // Update summary
+            document.getElementById('rev-sessions').textContent = totalSessions + totalComped + totalRookies + totalConsult;
+            document.getElementById('rev-free').textContent = totalComped + totalRookies + totalConsult;
+            document.getElementById('rev-gross').textContent = '$' + totalGross.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+            document.getElementById('rev-payroll').textContent = '$' + totalPay.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+            document.getElementById('rev-profit').textContent = '$' + (totalGross - totalPay).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+
+            // Render trainer table
+            const tbody = document.getElementById('revenue-table');
+            tbody.innerHTML = Object.entries(trainerStats)
+                .filter(([_, t]) => t.sessions + t.comped + t.rookies + t.consultation > 0)
+                .sort((a, b) => (b[1].sessions + b[1].comped + b[1].rookies) - (a[1].sessions + a[1].comped + a[1].rookies))
+                .map(([trainer, t]) => {
+                    const split = TRAINERS[trainer]?.split || 0.50;
+                    const name = TRAINERS[trainer]?.name || trainer;
+                    const profit = t.gross - t.pay;
+                    return `
+                        <tr>
+                            <td class="px-4 py-3 text-sm font-medium">${name}</td>
+                            <td class="px-4 py-3 text-sm text-center">${(split * 100).toFixed(0)}%</td>
+                            <td class="px-4 py-3 text-sm text-center">${t.sessions}</td>
+                            <td class="px-4 py-3 text-sm text-center">${t.comped || '-'}</td>
+                            <td class="px-4 py-3 text-sm text-center">${t.rookies || '-'}</td>
+                            <td class="px-4 py-3 text-sm text-center">${t.consultation || '-'}</td>
+                            <td class="px-4 py-3 text-sm text-right">$${t.gross.toFixed(2)}</td>
+                            <td class="px-4 py-3 text-sm text-right font-medium text-green-600">$${t.pay.toFixed(2)}</td>
+                            <td class="px-4 py-3 text-sm text-right text-primary">$${profit.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+            // Totals row
+            document.getElementById('revenue-totals').innerHTML = `
+                <tr>
+                    <td class="px-4 py-3 text-sm font-bold">TOTAL</td>
+                    <td class="px-4 py-3 text-sm text-center">-</td>
+                    <td class="px-4 py-3 text-sm text-center font-bold">${totalSessions}</td>
+                    <td class="px-4 py-3 text-sm text-center font-bold">${totalComped}</td>
+                    <td class="px-4 py-3 text-sm text-center font-bold">${totalRookies}</td>
+                    <td class="px-4 py-3 text-sm text-center font-bold">${totalConsult}</td>
+                    <td class="px-4 py-3 text-sm text-right font-bold">$${totalGross.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-sm text-right font-bold text-green-700">$${totalPay.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-sm text-right font-bold text-primary">$${(totalGross - totalPay).toFixed(2)}</td>
+                </tr>
+            `;
+
+            // Pending notice
+            document.getElementById('pending-notice').innerHTML = `
+                <p class="text-sm text-orange-800">
+                    <i class="fas fa-clock mr-2"></i>
+                    <strong>${pendingSessions.length} sessions pending resolution</strong> -
+                    Not included in revenue calculations until resolved.
+                </p>
+            `;
+        }
+
+        // ===== MODAL =====
+        let currentResolveSession = null;
+
+        function openResolveModal(member, date, trainer, status, issue) {
+            currentResolveSession = { member, date, trainer, status, issue };
+
+            if (status === 'unmatched') {
+                // Show the unmatched modal (enter GMS Member ID)
+                document.getElementById('modal-unmatched-session-info').textContent = `${date} - ${TRAINERS[trainer]?.name || trainer}`;
+                document.getElementById('modal-unmatched-trainer-info').textContent = `Session value: $${sessions.find(s => s.customer === member && s.date === date)?.cost.toFixed(2) || '0.00'}`;
+                document.getElementById('setmore-customer-name').textContent = member;
+                document.getElementById('gms-member-id').value = '';
+                document.getElementById('gms-lookup-result').classList.add('hidden');
+                document.getElementById('resolve-modal-unmatched').classList.remove('hidden');
+            } else {
+                // Show the no-package modal (resolution options)
+                document.getElementById('modal-nopackage-session-info').textContent = `${member} - ${date}`;
+                document.getElementById('modal-nopackage-issue').textContent = `Issue: ${issue || 'No Package'}`;
+                document.getElementById('resolve-modal-nopackage').classList.remove('hidden');
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeResolveModal() {
+            document.getElementById('resolve-modal-unmatched').classList.add('hidden');
+            document.getElementById('resolve-modal-nopackage').classList.add('hidden');
+            document.body.style.overflow = '';
+            document.querySelectorAll('.radio-card').forEach(card => card.classList.remove('selected'));
+            document.querySelectorAll('input[name="resolution"]').forEach(input => input.checked = false);
+        }
+
+        function selectResolution(card, value) {
+            document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input[type="radio"]').checked = true;
+
+            if (value === 'comp_unauthorized' || value === 'writeoff') {
+                document.querySelector('input[name="trainer_credit"][value="none"]').checked = true;
+            } else if (value === 'paid_single' || value === 'package_purchased') {
+                document.querySelector('input[name="trainer_credit"][value="full"]').checked = true;
+            }
+        }
+
+        // Simulate GMS member lookup
+        function lookupGmsMember() {
+            const memberId = document.getElementById('gms-member-id').value.trim();
+            if (!memberId) {
+                alert('Please enter a GMS Member ID');
+                return;
+            }
+
+            // Demo: simulate finding the member
+            const mockMembers = {
+                '12345': { name: 'John Smith', package: 'Gold 12-Pack', remaining: 8 },
+                '23456': { name: 'Jane Doe', package: 'Silver 8-Pack', remaining: 3 },
+                '34567': { name: 'Bob Wilson', package: 'Executive 20-Pack', remaining: 15 },
+                '45678': { name: 'Sarah Johnson', package: 'Starter 4-Pack', remaining: 2 }
+            };
+
+            const member = mockMembers[memberId];
+            if (member) {
+                document.getElementById('gms-member-name').textContent = member.name;
+                document.getElementById('gms-member-package').textContent = `${member.package} • ${member.remaining} visits remaining`;
+                document.getElementById('gms-lookup-result').classList.remove('hidden');
+            } else {
+                // Show not found but allow anyway (maybe they just got the ID from GMS)
+                document.getElementById('gms-member-name').textContent = `Member #${memberId}`;
+                document.getElementById('gms-member-package').textContent = 'Package info will be verified on save';
+                document.getElementById('gms-lookup-result').classList.remove('hidden');
+            }
+        }
+
+        function submitUnmatchedResolution() {
+            const memberId = document.getElementById('gms-member-id').value.trim();
+            if (!memberId) {
+                alert('Please enter the GMS Member ID');
+                return;
+            }
+
+            alert(`Member linked successfully!\n\nSetMore: ${currentResolveSession.member}\nGMS ID: ${memberId}\n\nSession is now ready for deduction.`);
+            closeResolveModal();
+
+            // Update session status (demo)
+            if (currentResolveSession) {
+                const idx = sessions.findIndex(s =>
+                    s.customer === currentResolveSession.member &&
+                    s.date === currentResolveSession.date
+                );
+                if (idx > -1) {
+                    sessions[idx].status = 'ready';
+                    sessions[idx].gmsId = memberId;
+                }
+            }
+            renderFollowUpTable();
+            updateCounts();
+        }
+
+        function submitNoPackageResolution() {
+            const resolution = document.querySelector('input[name="resolution"]:checked');
+            if (!resolution) {
+                alert('Please select a resolution type');
+                return;
+            }
+
+            const resolutionLabels = {
+                'paid_single': 'Paid for Single Session',
+                'package_purchased': 'Package Purchased',
+                'comp_authorized': 'Comp - Authorized',
+                'comp_unauthorized': 'Comp - Unauthorized',
+                'writeoff': 'Write-off'
+            };
+
+            alert(`Resolution saved!\n\n${currentResolveSession.member}\nResolution: ${resolutionLabels[resolution.value]}\n\nSession will be included in revenue calculations.`);
+            closeResolveModal();
+
+            // Update session status (demo)
+            if (currentResolveSession) {
+                const idx = sessions.findIndex(s =>
+                    s.customer === currentResolveSession.member &&
+                    s.date === currentResolveSession.date
+                );
+                if (idx > -1) {
+                    sessions[idx].status = 'ready';
+                    sessions[idx].resolution = resolution.value;
+                }
+            }
+            renderFollowUpTable();
+            updateCounts();
+        }
+
+        function exportToExcel() {
+            alert('Export functionality would generate Excel file with:\n\n• Trainer payroll summary\n• Session detail list\n• Revenue breakdown\n• Pending items report');
+        }
+
+        function completeMonth() {
+            if (confirm('Close December 2025 and finalize all calculations?\n\nThis will lock the month and generate final reports.')) {
+                alert('December 2025 closed successfully!\n\nFinal Reports Generated:\n• Trainer Payroll Report\n• Session Summary\n• Revenue Analysis\n• Pending Items Carryover');
+            }
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

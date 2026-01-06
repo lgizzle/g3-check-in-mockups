@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 PT Portal - Month-End Processing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .step-btn { transition: all 0.2s; }
+        .step-btn.active { background-color: #7c3aed; color: white; }
+        .step-btn.completed { background-color: #10b981; color: white; }
+        .step-btn:not(.active):not(.completed) { background-color: #e5e7eb; color: #6b7280; }
+        .table-row:hover { background-color: #f3f4f6; }
+        .warning-row { background-color: #fef3c7; }
+        .error-row { background-color: #fee2e2; }
+        .filter-tab { transition: all 0.15s; }
+        .filter-tab.active { background-color: #7c3aed; color: white; border-color: #7c3aed; }
+        .filter-tab:not(.active):hover { background-color: #f3f4f6; }
+        .modal-backdrop { background-color: rgba(0,0,0,0.5); }
+        .radio-card { transition: all 0.15s; }
+        .radio-card:hover { border-color: #a78bfa; }
+        .radio-card.selected { border-color: #7c3aed; background-color: #f5f3ff; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-purple-900 text-white py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://placehold.co/50x50/581c87/white?text=PT" alt="PT Portal" class="rounded">
+                <div>
+                    <h1 class="text-xl font-bold">Personal Training Portal</h1>
+                    <p class="text-purple-200 text-sm">Month-End Session Processing</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-purple-200">Logged in as: JR (Lead Trainer)</p>
+                <p class="text-xs text-purple-300">Jan 2, 2026</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Demo Notice -->
+    <div class="bg-yellow-50 border-b border-yellow-200 py-3 px-6">
+        <div class="max-w-7xl mx-auto">
+            <p class="text-sm text-yellow-800">
+                <i class="fas fa-flask mr-2"></i>
+                <strong>STANDALONE MOCKUP:</strong> This page demonstrates the PT Portal workflow. Not yet integrated with main app.
+            </p>
+        </div>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="bg-white border-b shadow-sm py-4 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="goToStep(1)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-1">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">1</span>
+                        Import
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(2)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-2">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">2</span>
+                        Review
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(3)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-3">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">3</span>
+                        Deduct
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(4)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-4">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">4</span>
+                        Follow-Up
+                    </button>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                    <button onclick="goToStep(5)" class="step-btn px-4 py-2 rounded-lg font-medium flex items-center gap-2" id="step-btn-5">
+                        <span class="w-6 h-6 rounded-full bg-current flex items-center justify-center text-sm">5</span>
+                        Revenue
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select class="border rounded-lg px-3 py-2 text-sm" id="monthSelect">
+                        <option value="2025-12">December 2025</option>
+                        <option value="2025-11">November 2025</option>
+                        <option value="2025-10">October 2025</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-6">
+        <!-- STEP 1: Import -->
+        <div id="step-1" class="step-content">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-file-import text-purple-600 mr-3"></i>
+                    Step 1: Import SetMore Report
+                </h2>
+
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-purple-400 transition-colors">
+                    <i class="fas fa-cloud-upload-alt text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-lg text-gray-600 mb-4">Drag & drop your SetMore CSV export here</p>
+                    <p class="text-sm text-gray-400 mb-6">or</p>
+                    <label class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 cursor-pointer inline-block">
+                        <i class="fas fa-folder-open mr-2"></i>
+                        Choose File
+                        <input type="file" class="hidden" accept=".csv" onchange="handleFileUpload(this)">
+                    </label>
+                </div>
+
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Expected Format</h3>
+                    <p class="text-sm text-blue-700 mb-2">Export from SetMore: Reports &gt; Appointments &gt; Export CSV</p>
+                    <code class="text-xs bg-blue-100 p-2 rounded block">
+                        Date, Time, Service, Customer, Staff, Status
+                    </code>
+                </div>
+
+                <!-- Demo: Simulate file selected -->
+                <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200" id="file-preview" style="display: none;">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-file-csv text-3xl text-green-600"></i>
+                            <div>
+                                <p class="font-medium text-green-800">setmore_december_2025.csv</p>
+                                <p class="text-sm text-green-600">47 sessions found</p>
+                            </div>
+                        </div>
+                        <button onclick="goToStep(2)" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            Import & Continue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Demo button -->
+                <div class="mt-4 text-center">
+                    <button onclick="simulateImport()" class="text-sm text-purple-600 hover:text-purple-800">
+                        <i class="fas fa-play-circle mr-1"></i> Demo: Simulate file import
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Review Sessions -->
+        <div id="step-2" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-list-check text-purple-600 mr-3"></i>
+                            Step 2: Review Sessions
+                        </h2>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="filterSessions('all')" class="filter-tab active px-4 py-2 border rounded-lg text-sm font-medium" id="filter-all">
+                            All <span class="ml-1 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">47</span>
+                        </button>
+                        <button onclick="filterSessions('ready')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-ready">
+                            <i class="fas fa-check text-green-600 mr-1"></i> Ready
+                            <span class="ml-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">39</span>
+                        </button>
+                        <button onclick="filterSessions('unmatched')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-unmatched">
+                            <i class="fas fa-question text-yellow-600 mr-1"></i> Unmatched
+                            <span class="ml-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs">3</span>
+                        </button>
+                        <button onclick="filterSessions('nopackage')" class="filter-tab px-4 py-2 border rounded-lg text-sm font-medium" id="filter-nopackage">
+                            <i class="fas fa-exclamation-triangle text-red-600 mr-1"></i> No Package
+                            <span class="ml-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs">5</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sessions Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Date</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Member (SetMore)</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">GMS Match</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Package</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Visits Left</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y" id="sessions-table">
+                            <!-- Ready rows -->
+                            <tr class="table-row session-row" data-status="ready">
+                                <td class="px-4 py-3 text-sm">12/03/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">John Smith</td>
+                                <td class="px-4 py-3 text-sm text-green-600"><i class="fas fa-check-circle mr-1"></i> John Smith (#1234)</td>
+                                <td class="px-4 py-3 text-sm">Matt Enas</td>
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs">Hybrid Gold</span></td>
+                                <td class="px-4 py-3 text-sm">8 of 12</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Ready</span></td>
+                            </tr>
+                            <tr class="table-row session-row" data-status="ready">
+                                <td class="px-4 py-3 text-sm">12/03/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Sarah Johnson</td>
+                                <td class="px-4 py-3 text-sm text-green-600"><i class="fas fa-check-circle mr-1"></i> Sarah Johnson (#2456)</td>
+                                <td class="px-4 py-3 text-sm">Matt Enas</td>
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">Hybrid Silver</span></td>
+                                <td class="px-4 py-3 text-sm">3 of 8</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Ready</span></td>
+                            </tr>
+                            <!-- Unmatched row -->
+                            <tr class="table-row warning-row session-row" data-status="unmatched">
+                                <td class="px-4 py-3 text-sm">12/04/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Mike Williams</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <select class="border rounded px-2 py-1 text-sm bg-yellow-50">
+                                        <option value="">-- Select GMS Member --</option>
+                                        <option value="3421">Michael Williams (#3421)</option>
+                                        <option value="5567">Mike Williams Jr (#5567)</option>
+                                    </select>
+                                </td>
+                                <td class="px-4 py-3 text-sm">Sarah T</td>
+                                <td class="px-4 py-3 text-sm text-gray-400">--</td>
+                                <td class="px-4 py-3 text-sm text-gray-400">--</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs"><i class="fas fa-question-circle mr-1"></i>Unmatched</span></td>
+                            </tr>
+                            <tr class="table-row warning-row session-row" data-status="unmatched">
+                                <td class="px-4 py-3 text-sm">12/10/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">J. Rodriguez</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <select class="border rounded px-2 py-1 text-sm bg-yellow-50">
+                                        <option value="">-- Select GMS Member --</option>
+                                        <option value="4521">Juan Rodriguez (#4521)</option>
+                                        <option value="6782">Jose Rodriguez (#6782)</option>
+                                    </select>
+                                </td>
+                                <td class="px-4 py-3 text-sm">JR</td>
+                                <td class="px-4 py-3 text-sm text-gray-400">--</td>
+                                <td class="px-4 py-3 text-sm text-gray-400">--</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs"><i class="fas fa-question-circle mr-1"></i>Unmatched</span></td>
+                            </tr>
+                            <!-- Ready row -->
+                            <tr class="table-row session-row" data-status="ready">
+                                <td class="px-4 py-3 text-sm">12/05/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Lisa Chen</td>
+                                <td class="px-4 py-3 text-sm text-green-600"><i class="fas fa-check-circle mr-1"></i> Lisa Chen (#4532)</td>
+                                <td class="px-4 py-3 text-sm">JR</td>
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Single 60min</span></td>
+                                <td class="px-4 py-3 text-sm">1 of 1</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Ready</span></td>
+                            </tr>
+                            <!-- No Package rows -->
+                            <tr class="table-row error-row session-row" data-status="nopackage">
+                                <td class="px-4 py-3 text-sm">12/06/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Bob Anderson</td>
+                                <td class="px-4 py-3 text-sm text-green-600"><i class="fas fa-check-circle mr-1"></i> Bob Anderson (#7821)</td>
+                                <td class="px-4 py-3 text-sm">Matt Enas</td>
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">EXPIRED 11/30</span></td>
+                                <td class="px-4 py-3 text-sm text-red-600">0 of 0</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs"><i class="fas fa-exclamation-triangle mr-1"></i>No Package</span></td>
+                            </tr>
+                            <tr class="table-row error-row session-row" data-status="nopackage">
+                                <td class="px-4 py-3 text-sm">12/12/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Tom Baker</td>
+                                <td class="px-4 py-3 text-sm text-green-600"><i class="fas fa-check-circle mr-1"></i> Tom Baker (#8901)</td>
+                                <td class="px-4 py-3 text-sm">Sarah T</td>
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">NONE</span></td>
+                                <td class="px-4 py-3 text-sm text-red-600">--</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs"><i class="fas fa-exclamation-triangle mr-1"></i>No Package</span></td>
+                            </tr>
+                            <!-- Ready row -->
+                            <tr class="table-row session-row" data-status="ready">
+                                <td class="px-4 py-3 text-sm">12/08/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Emily Davis</td>
+                                <td class="px-4 py-3 text-sm text-green-600"><i class="fas fa-check-circle mr-1"></i> Emily Davis (#3298)</td>
+                                <td class="px-4 py-3 text-sm">Sarah T</td>
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs">Hybrid Gold</span></td>
+                                <td class="px-4 py-3 text-sm"><span class="text-orange-600 font-medium">2 of 12</span> <span class="text-xs text-orange-500">LOW</span></td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Ready</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-gray-50 border-t text-sm text-gray-500 text-center">
+                    Showing 8 of 47 sessions (demo preview)
+                </div>
+
+                <!-- Actions -->
+                <div class="p-6 border-t flex justify-between items-center">
+                    <button onclick="goToStep(1)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Import
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-gray-500">8 issues need attention</span>
+                        <button onclick="goToStep(3)" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                            Continue to Deduction <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Apply Deductions -->
+        <div id="step-3" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-minus-circle text-purple-600 mr-3"></i>
+                        Step 3: Apply Session Deductions
+                    </h2>
+                    <p class="text-gray-600 mt-2">Deduct visits from member packages for matched sessions with active packages.</p>
+                </div>
+
+                <div class="p-6">
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center cursor-pointer hover:shadow-md" onclick="goToStep(2); filterSessions('ready')">
+                            <p class="text-3xl font-bold text-green-700">39</p>
+                            <p class="text-sm text-green-600">Ready to Deduct</p>
+                        </div>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center cursor-pointer hover:shadow-md" onclick="goToStep(2); filterSessions('unmatched')">
+                            <p class="text-3xl font-bold text-yellow-700">3</p>
+                            <p class="text-sm text-yellow-600">Unmatched (Skip)</p>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center cursor-pointer hover:shadow-md" onclick="goToStep(2); filterSessions('nopackage')">
+                            <p class="text-3xl font-bold text-red-700">5</p>
+                            <p class="text-sm text-red-600">No Package (Skip)</p>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                            <p class="text-3xl font-bold text-purple-700">39</p>
+                            <p class="text-sm text-purple-600">Will Deduct Now</p>
+                        </div>
+                    </div>
+
+                    <!-- Preview Table -->
+                    <div class="border rounded-lg overflow-hidden mb-6">
+                        <div class="bg-gray-50 px-4 py-3 border-b">
+                            <h3 class="font-medium text-gray-700">Deduction Preview (by Member)</h3>
+                        </div>
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Member</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Package</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Sessions</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Before</th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600"></th>
+                                    <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">After</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr>
+                                    <td class="px-4 py-3 text-sm font-medium">John Smith</td>
+                                    <td class="px-4 py-3 text-sm">Hybrid Gold</td>
+                                    <td class="px-4 py-3 text-sm text-center">4</td>
+                                    <td class="px-4 py-3 text-sm text-center">8 visits</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-arrow-right text-gray-400"></i></td>
+                                    <td class="px-4 py-3 text-sm text-center font-medium text-green-600">4 visits</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-sm font-medium">Sarah Johnson</td>
+                                    <td class="px-4 py-3 text-sm">Hybrid Silver</td>
+                                    <td class="px-4 py-3 text-sm text-center">3</td>
+                                    <td class="px-4 py-3 text-sm text-center">3 visits</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-arrow-right text-gray-400"></i></td>
+                                    <td class="px-4 py-3 text-sm text-center font-medium text-orange-600">0 visits</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-sm font-medium">Lisa Chen</td>
+                                    <td class="px-4 py-3 text-sm">Single 60min</td>
+                                    <td class="px-4 py-3 text-sm text-center">1</td>
+                                    <td class="px-4 py-3 text-sm text-center">1 visit</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-arrow-right text-gray-400"></i></td>
+                                    <td class="px-4 py-3 text-sm text-center font-medium text-gray-600">0 visits</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-sm font-medium">Emily Davis</td>
+                                    <td class="px-4 py-3 text-sm">Hybrid Gold</td>
+                                    <td class="px-4 py-3 text-sm text-center">2</td>
+                                    <td class="px-4 py-3 text-sm text-center">2 visits</td>
+                                    <td class="px-4 py-3 text-center"><i class="fas fa-arrow-right text-gray-400"></i></td>
+                                    <td class="px-4 py-3 text-sm text-center font-medium text-orange-600">0 visits</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="p-3 bg-gray-50 border-t text-sm text-gray-500 text-center">
+                            Showing 4 of 28 members with sessions
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between items-center">
+                        <button onclick="goToStep(2)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Review
+                        </button>
+                        <div class="flex items-center gap-4">
+                            <button class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-download mr-2"></i> Export Preview
+                            </button>
+                            <button onclick="applyDeductions()" class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                                <i class="fas fa-check-double mr-2"></i> Apply 39 Deductions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Message (hidden initially) -->
+                <div id="deduction-success" class="hidden p-6 bg-green-50 border-t border-green-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-check-circle text-4xl text-green-600"></i>
+                            <div>
+                                <p class="text-lg font-bold text-green-800">Deductions Applied Successfully!</p>
+                                <p class="text-sm text-green-600">39 sessions deducted from 28 member packages</p>
+                            </div>
+                        </div>
+                        <button onclick="goToStep(4)" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                            Handle Follow-Ups <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Follow-Up Queue -->
+        <div id="step-4" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                <i class="fas fa-clipboard-list text-purple-600 mr-3"></i>
+                                Step 4: Follow-Up Queue
+                            </h2>
+                            <p class="text-gray-600 mt-1">Sessions that need resolution before counting toward revenue.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">3 Unmatched</span>
+                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">5 No Package</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Follow-up Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Date</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Member</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Contact</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Issue</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="table-row error-row">
+                                <td class="px-4 py-3 text-sm">12/06/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Bob Anderson</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <div class="text-xs text-gray-500">(555) 234-5678</div>
+                                    <div class="text-xs text-blue-600">bob@email.com</div>
+                                </td>
+                                <td class="px-4 py-3 text-sm">Matt Enas</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Package Expired</span></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="openResolveModal('Bob Anderson', '12/06/25', 'Matt Enas')" class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        <i class="fas fa-wrench mr-1"></i> Resolve
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="table-row error-row">
+                                <td class="px-4 py-3 text-sm">12/12/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Tom Baker</td>
+                                <td class="px-4 py-3 text-sm">
+                                    <div class="text-xs text-gray-500">(555) 345-6789</div>
+                                    <div class="text-xs text-blue-600">tom.b@email.com</div>
+                                </td>
+                                <td class="px-4 py-3 text-sm">Sarah T</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">No Package</span></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="openResolveModal('Tom Baker', '12/12/25', 'Sarah T')" class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        <i class="fas fa-wrench mr-1"></i> Resolve
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="table-row warning-row">
+                                <td class="px-4 py-3 text-sm">12/04/25</td>
+                                <td class="px-4 py-3 text-sm font-medium">Mike Williams</td>
+                                <td class="px-4 py-3 text-sm text-gray-400">Unknown</td>
+                                <td class="px-4 py-3 text-sm">Sarah T</td>
+                                <td class="px-4 py-3"><span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">Unmatched</span></td>
+                                <td class="px-4 py-3">
+                                    <button onclick="openResolveModal('Mike Williams', '12/04/25', 'Sarah T')" class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        <i class="fas fa-wrench mr-1"></i> Resolve
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-gray-50 border-t text-sm text-gray-500 text-center">
+                    Showing 3 of 8 follow-up items
+                </div>
+
+                <!-- Actions -->
+                <div class="p-6 border-t flex justify-between items-center">
+                    <button onclick="goToStep(3)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Deductions
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            <i class="fas fa-clock mr-2"></i> Carry to Next Month (5)
+                        </button>
+                        <button onclick="goToStep(5)" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                            Continue to Revenue Split <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: Revenue Split -->
+        <div id="step-5" class="step-content hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-chart-pie text-purple-600 mr-3"></i>
+                            Step 5: Revenue Split - December 2025
+                        </h2>
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                            <i class="fas fa-file-excel mr-2"></i> Export to Excel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="p-6 bg-purple-50 border-b">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-purple-700">39</p>
+                            <p class="text-sm text-purple-600">Deducted</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-green-700">3</p>
+                            <p class="text-sm text-green-600">Paid Single</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-purple-700">$3,375</p>
+                            <p class="text-sm text-purple-600">Gross Revenue</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-green-700">$2,700</p>
+                            <p class="text-sm text-green-600">Trainer Payout</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-4xl font-bold text-blue-700">$675</p>
+                            <p class="text-sm text-blue-600">Management Fee</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainer Breakdown -->
+                <div class="p-6">
+                    <h3 class="font-bold text-gray-700 mb-4">Trainer Earnings</h3>
+                    <table class="w-full border rounded-lg overflow-hidden">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Sessions</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Gross Revenue</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Trainer Share (80%)</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-600">Mgmt Fee (20%)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-medium">Matt Enas</td>
+                                <td class="px-4 py-3 text-sm text-center">16</td>
+                                <td class="px-4 py-3 text-sm text-right">$1,200.00</td>
+                                <td class="px-4 py-3 text-sm text-right font-medium text-green-600">$960.00</td>
+                                <td class="px-4 py-3 text-sm text-right text-blue-600">$240.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-medium">Sarah Thompson</td>
+                                <td class="px-4 py-3 text-sm text-center">14</td>
+                                <td class="px-4 py-3 text-sm text-right">$1,050.00</td>
+                                <td class="px-4 py-3 text-sm text-right font-medium text-green-600">$840.00</td>
+                                <td class="px-4 py-3 text-sm text-right text-blue-600">$210.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-medium">JR (Lead)</td>
+                                <td class="px-4 py-3 text-sm text-center">7</td>
+                                <td class="px-4 py-3 text-sm text-right">$525.00</td>
+                                <td class="px-4 py-3 text-sm text-right font-medium text-green-600">$420.00</td>
+                                <td class="px-4 py-3 text-sm text-right text-blue-600">$105.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-medium">Alex Rivera</td>
+                                <td class="px-4 py-3 text-sm text-center">5</td>
+                                <td class="px-4 py-3 text-sm text-right">$375.00</td>
+                                <td class="px-4 py-3 text-sm text-right font-medium text-green-600">$300.00</td>
+                                <td class="px-4 py-3 text-sm text-right text-blue-600">$75.00</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-500" colspan="5">
+                                    <i class="fas fa-ban mr-2"></i>Sessions with No Trainer Credit (comp/write-off): 3
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-gray-100 font-medium">
+                            <tr>
+                                <td class="px-4 py-3 text-sm">TOTAL</td>
+                                <td class="px-4 py-3 text-sm text-center">42</td>
+                                <td class="px-4 py-3 text-sm text-right">$3,375.00</td>
+                                <td class="px-4 py-3 text-sm text-right text-green-700">$2,700.00</td>
+                                <td class="px-4 py-3 text-sm text-right text-blue-700">$675.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p class="text-sm text-yellow-800">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Note:</strong> Revenue split formula shown is placeholder (80/20). Actual formula will be configured based on JR's spreadsheet.
+                        </p>
+                    </div>
+
+                    <!-- Pending items notice -->
+                    <div class="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p class="text-sm text-orange-800">
+                            <i class="fas fa-clock mr-2"></i>
+                            <strong>5 sessions carried to next month</strong> - Still pending resolution (unmatched or unpaid).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="p-6 border-t flex justify-between items-center bg-gray-50">
+                    <button onclick="goToStep(4)" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white">
+                            <i class="fas fa-print mr-2"></i> Print Report
+                        </button>
+                        <button class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                            <i class="fas fa-check mr-2"></i> Complete & Close Month
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Resolution Modal -->
+    <div id="resolve-modal" class="fixed inset-0 hidden z-50">
+        <div class="modal-backdrop absolute inset-0" onclick="closeResolveModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+                <!-- Modal Header -->
+                <div class="p-6 border-b bg-purple-50">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Resolve Session</h3>
+                            <p class="text-sm text-gray-600 mt-1" id="modal-session-info">Bob Anderson - 12/06/25</p>
+                            <p class="text-sm text-purple-600" id="modal-trainer-info">Trainer: Matt Enas</p>
+                        </div>
+                        <button onclick="closeResolveModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <!-- Resolution Type -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">What happened?</label>
+                        <div class="space-y-2">
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'paid_single')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="paid_single" class="text-purple-600">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Paid for Single Session ($75)</p>
+                                        <p class="text-xs text-gray-500">Member paid for this session separately</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'package_purchased')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="package_purchased" class="text-purple-600">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Package Purchased + Deduct</p>
+                                        <p class="text-xs text-gray-500">Member bought a package, deduct one session</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'comp_authorized')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="comp_authorized" class="text-purple-600">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Comp - Authorized</p>
+                                        <p class="text-xs text-gray-500">Intro session, promo, or approved make-good</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'comp_unauthorized')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="comp_unauthorized" class="text-purple-600">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Comp - Unauthorized (Trainer Error)</p>
+                                        <p class="text-xs text-gray-500">Trainer didn't verify package before session</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'writeoff')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="writeoff" class="text-purple-600">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Write-off (Uncollectable)</p>
+                                        <p class="text-xs text-gray-500">Unable to collect payment</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radio-card border rounded-lg p-3 cursor-pointer" onclick="selectResolution(this, 'following_up')">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="resolution" value="following_up" class="text-purple-600">
+                                    <div>
+                                        <p class="font-medium text-gray-800">Still Following Up</p>
+                                        <p class="text-xs text-gray-500">Keep in queue, carry to next month</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trainer Credit -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg" id="trainer-credit-section">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Trainer Credit</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="trainer_credit" value="full" class="text-purple-600">
+                                <span class="text-sm">Yes - counts toward sessions & pay</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="trainer_credit" value="stats_only" class="text-purple-600">
+                                <span class="text-sm">Sessions only - counts in stats, no pay</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="trainer_credit" value="none" class="text-purple-600" checked>
+                                <span class="text-sm">No - does not count</span>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Default for unauthorized comp / write-off is "No credit"</p>
+                    </div>
+
+                    <!-- Approved By -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Approved By</label>
+                        <select class="w-full border rounded-lg px-3 py-2">
+                            <option value="jr">JR (Lead Trainer)</option>
+                            <option value="manager">Manager</option>
+                            <option value="owner">Owner</option>
+                        </select>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                        <textarea class="w-full border rounded-lg px-3 py-2 h-20" placeholder="Add context about this resolution..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t bg-gray-50 flex justify-end gap-3">
+                    <button onclick="closeResolveModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white">
+                        Cancel
+                    </button>
+                    <button onclick="submitResolution()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                        <i class="fas fa-check mr-2"></i> Resolve & Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-4 px-6 text-center text-sm mt-8">
+        <p>G3 Sports & Fitness - Personal Training Portal | Standalone Mockup v2.0</p>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+        let currentFilter = 'all';
+
+        function goToStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+
+            // Show target step
+            document.getElementById('step-' + step).classList.remove('hidden');
+
+            // Update step buttons
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById('step-btn-' + i);
+                btn.classList.remove('active', 'completed');
+                if (i < step) {
+                    btn.classList.add('completed');
+                } else if (i === step) {
+                    btn.classList.add('active');
+                }
+            }
+
+            currentStep = step;
+        }
+
+        function filterSessions(filter) {
+            currentFilter = filter;
+
+            // Update filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('filter-' + filter).classList.add('active');
+
+            // Filter rows
+            document.querySelectorAll('.session-row').forEach(row => {
+                if (filter === 'all' || row.dataset.status === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function simulateImport() {
+            document.getElementById('file-preview').style.display = 'block';
+        }
+
+        function handleFileUpload(input) {
+            if (input.files.length > 0) {
+                document.getElementById('file-preview').style.display = 'block';
+            }
+        }
+
+        function applyDeductions() {
+            document.getElementById('deduction-success').classList.remove('hidden');
+            document.getElementById('step-btn-3').classList.add('completed');
+        }
+
+        function openResolveModal(member, date, trainer) {
+            document.getElementById('modal-session-info').textContent = member + ' - ' + date;
+            document.getElementById('modal-trainer-info').textContent = 'Trainer: ' + trainer;
+            document.getElementById('resolve-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeResolveModal() {
+            document.getElementById('resolve-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            // Reset selections
+            document.querySelectorAll('.radio-card').forEach(card => card.classList.remove('selected'));
+            document.querySelectorAll('input[name="resolution"]').forEach(input => input.checked = false);
+        }
+
+        function selectResolution(card, value) {
+            // Remove selected from all cards
+            document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+            // Add selected to clicked card
+            card.classList.add('selected');
+            // Check the radio
+            card.querySelector('input[type="radio"]').checked = true;
+
+            // Update trainer credit defaults based on resolution type
+            if (value === 'comp_unauthorized' || value === 'writeoff') {
+                document.querySelector('input[name="trainer_credit"][value="none"]').checked = true;
+            } else if (value === 'paid_single' || value === 'package_purchased') {
+                document.querySelector('input[name="trainer_credit"][value="full"]').checked = true;
+            }
+        }
+
+        function submitResolution() {
+            // In real app, would submit to backend
+            alert('Resolution saved! (Demo only)');
+            closeResolveModal();
+        }
+
+        // Initialize
+        goToStep(1);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G3 PT Portal - Trainer Administration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { background-color: #7c3aed; color: white; border-color: #7c3aed; }
+        .tab-btn:not(.active):hover { background-color: #f3f4f6; }
+        .table-row:hover { background-color: #f3f4f6; }
+        .cert-warning { background-color: #fef3c7; }
+        .cert-expired { background-color: #fee2e2; }
+        .cert-good { background-color: #d1fae5; }
+        .modal-backdrop { background-color: rgba(0,0,0,0.5); }
+        .split-history-row:nth-child(even) { background-color: #f9fafb; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-purple-900 text-white py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-purple-700 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-dumbbell text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">Personal Training Portal</h1>
+                    <p class="text-purple-200 text-sm">Trainer Administration</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="pt-portal-home.html" class="text-purple-200 hover:text-white text-sm">
+                    <i class="fas fa-home mr-1"></i> Home
+                </a>
+                <a href="pt-dashboard.html" class="text-purple-200 hover:text-white text-sm">
+                    <i class="fas fa-chart-line mr-1"></i> Dashboard
+                </a>
+                <a href="pt-portal-demo.html" class="text-purple-200 hover:text-white text-sm">
+                    <i class="fas fa-file-import mr-1"></i> Sessions
+                </a>
+                <div class="text-right">
+                    <p class="text-sm text-purple-200">Logged in as: JR (Admin)</p>
+                    <p class="text-xs text-purple-300">Jan 4, 2026</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Access Notice -->
+    <div class="bg-amber-50 border-b border-amber-200 py-3 px-6">
+        <div class="max-w-7xl mx-auto">
+            <p class="text-sm text-amber-800">
+                <i class="fas fa-shield-alt mr-2"></i>
+                <strong>ADMIN ACCESS:</strong> This page is restricted to authorized personnel (JR, Management). Changes affect payroll calculations.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="bg-white border-b shadow-sm py-4 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center gap-4">
+                <button onclick="switchTab('trainers')" class="tab-btn px-6 py-2 rounded-lg font-medium border-2 active" id="tab-trainers">
+                    <i class="fas fa-users mr-2"></i> Trainers
+                </button>
+                <button onclick="switchTab('certifications')" class="tab-btn px-6 py-2 rounded-lg font-medium border-2 border-gray-200" id="tab-certifications">
+                    <i class="fas fa-certificate mr-2"></i> Certifications
+                    <span class="ml-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs" id="cert-alerts">2</span>
+                </button>
+                <button onclick="switchTab('settings')" class="tab-btn px-6 py-2 rounded-lg font-medium border-2 border-gray-200" id="tab-settings">
+                    <i class="fas fa-cog mr-2"></i> Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-6">
+
+        <!-- TRAINERS TAB -->
+        <div id="content-trainers" class="tab-content">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-users text-purple-600 mr-3"></i>
+                        Trainer Roster
+                    </h2>
+                    <button onclick="openAddTrainerModal()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        <i class="fas fa-plus mr-2"></i> Add Trainer
+                    </button>
+                </div>
+
+                <!-- Trainer Cards -->
+                <div class="grid gap-4" id="trainer-list">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATIONS TAB -->
+        <div id="content-certifications" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-certificate text-purple-600 mr-3"></i>
+                        Certifications & CEU Tracking
+                    </h2>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-gray-500">
+                            <span class="inline-block w-3 h-3 bg-red-200 rounded mr-1"></span> Expired
+                            <span class="inline-block w-3 h-3 bg-yellow-200 rounded ml-3 mr-1"></span> Due Soon
+                            <span class="inline-block w-3 h-3 bg-green-200 rounded ml-3 mr-1"></span> Current
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Certification Alerts -->
+                <div class="mb-6 space-y-3" id="cert-alerts-section">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <!-- Certification Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Trainer</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Primary Cert</th>
+                                <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Cert Expires</th>
+                                <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">CPR/AED</th>
+                                <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">CEUs Needed</th>
+                                <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">CEU Deadline</th>
+                                <th class="px-4 py-3 text-center text-sm font-medium text-gray-600">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cert-table-body">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="content-settings" class="tab-content hidden">
+            <div class="space-y-6">
+                <!-- Rate Settings -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-dollar-sign text-purple-600 mr-3"></i>
+                        Rate Settings
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Minimum Wage -->
+                        <div class="border rounded-lg p-4">
+                            <h3 class="font-bold text-gray-700 mb-3">
+                                <i class="fas fa-coins text-amber-500 mr-2"></i>
+                                Oregon Minimum Wage (Comped Sessions)
+                            </h3>
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <label class="text-sm text-gray-500">Current Rate</label>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-gray-400">$</span>
+                                        <input type="number" step="0.01" value="15.05" class="border rounded px-3 py-2 w-24 text-lg font-bold" id="min-wage-input">
+                                        <span class="text-gray-400">/hr</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-sm text-gray-500">Effective Date</label>
+                                    <input type="date" value="2025-07-01" class="border rounded px-3 py-2" id="min-wage-date">
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Oregon Standard rate (Washington County). Updates annually on July 1.
+                            </p>
+                            <button onclick="saveMinWage()" class="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+                                <i class="fas fa-save mr-1"></i> Save Rate
+                            </button>
+                        </div>
+
+                        <!-- Rookies Split -->
+                        <div class="border rounded-lg p-4">
+                            <h3 class="font-bold text-gray-700 mb-3">
+                                <i class="fas fa-user-graduate text-indigo-500 mr-2"></i>
+                                Rookies Training Split
+                            </h3>
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <label class="text-sm text-gray-500">Split Percentage</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" step="1" value="50" min="0" max="100" class="border rounded px-3 py-2 w-20 text-lg font-bold" id="rookies-split-input">
+                                        <span class="text-gray-400">%</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-sm text-gray-500">Effective Date</label>
+                                    <input type="date" value="2024-01-01" class="border rounded px-3 py-2" id="rookies-split-date">
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                All trainers receive this split for Rookies sessions regardless of tier.
+                            </p>
+                            <button onclick="saveRookiesSplit()" class="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+                                <i class="fas fa-save mr-1"></i> Save Split
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rate History -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="font-bold text-gray-800 mb-4">
+                        <i class="fas fa-history text-gray-500 mr-2"></i>
+                        Rate History
+                    </h3>
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="px-4 py-2 text-left text-gray-600">Setting</th>
+                                <th class="px-4 py-2 text-left text-gray-600">Value</th>
+                                <th class="px-4 py-2 text-left text-gray-600">Effective</th>
+                                <th class="px-4 py-2 text-left text-gray-600">Changed By</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rate-history">
+                            <tr class="border-b">
+                                <td class="px-4 py-2">Oregon Min Wage</td>
+                                <td class="px-4 py-2 font-mono">$15.05/hr</td>
+                                <td class="px-4 py-2">Jul 1, 2025</td>
+                                <td class="px-4 py-2">System</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="px-4 py-2">Oregon Min Wage</td>
+                                <td class="px-4 py-2 font-mono">$14.70/hr</td>
+                                <td class="px-4 py-2">Jul 1, 2024</td>
+                                <td class="px-4 py-2">System</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="px-4 py-2">Rookies Split</td>
+                                <td class="px-4 py-2 font-mono">50%</td>
+                                <td class="px-4 py-2">Jan 1, 2024</td>
+                                <td class="px-4 py-2">JR</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Trainer Modal -->
+    <div id="edit-trainer-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-user-edit text-purple-600 mr-2"></i>
+                        <span id="modal-title">Edit Trainer</span>
+                    </h3>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <!-- GMS Link -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 class="font-bold text-blue-800 mb-2">
+                        <i class="fas fa-link mr-2"></i>GMS Profile Link
+                    </h4>
+                    <div class="flex items-center gap-4">
+                        <div class="flex-1">
+                            <label class="text-sm text-blue-700">GMS Staff ID</label>
+                            <input type="text" placeholder="e.g., STF-00142" class="w-full border rounded px-3 py-2 mt-1" id="gms-staff-id">
+                        </div>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-5">
+                            <i class="fas fa-search mr-1"></i> Lookup
+                        </button>
+                    </div>
+                    <p class="text-xs text-blue-600 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Links to GMS for contact info, hire date, and employment status.
+                    </p>
+                </div>
+
+                <!-- Basic Info -->
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Display Name</label>
+                        <input type="text" class="w-full border rounded px-3 py-2 mt-1" id="trainer-name" placeholder="First Last">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">SetMore Name (must match exactly)</label>
+                        <input type="text" class="w-full border rounded px-3 py-2 mt-1" id="setmore-name" placeholder="As shown in SetMore reports">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" class="w-full border rounded px-3 py-2 mt-1" id="trainer-email" placeholder="trainer@g3sports.com">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Status</label>
+                        <select class="w-full border rounded px-3 py-2 mt-1" id="trainer-status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="onleave">On Leave</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Current Split -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-3">
+                        <i class="fas fa-percent text-green-600 mr-2"></i>
+                        Current Split Configuration
+                    </h4>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="text-sm text-gray-600">Split Percentage</label>
+                            <div class="flex items-center gap-2 mt-1">
+                                <input type="number" min="0" max="100" class="border rounded px-3 py-2 w-20" id="current-split" value="70">
+                                <span class="text-gray-500">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">Tier</label>
+                            <select class="w-full border rounded px-3 py-2 mt-1" id="trainer-tier">
+                                <option value="entry">Entry (50%)</option>
+                                <option value="standard">Standard (60%)</option>
+                                <option value="senior" selected>Senior (70%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">Effective Date</label>
+                            <input type="date" class="w-full border rounded px-3 py-2 mt-1" id="split-effective">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Split History -->
+                <div class="mb-6">
+                    <h4 class="font-bold text-gray-700 mb-3">
+                        <i class="fas fa-history text-gray-500 mr-2"></i>
+                        Split History
+                    </h4>
+                    <div class="border rounded-lg overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Split</th>
+                                    <th class="px-4 py-2 text-left">Tier</th>
+                                    <th class="px-4 py-2 text-left">Effective</th>
+                                    <th class="px-4 py-2 text-left">End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="split-history-body">
+                                <tr class="split-history-row border-b">
+                                    <td class="px-4 py-2 font-mono">70%</td>
+                                    <td class="px-4 py-2">Senior</td>
+                                    <td class="px-4 py-2">Jan 1, 2025</td>
+                                    <td class="px-4 py-2 text-green-600">Current</td>
+                                </tr>
+                                <tr class="split-history-row border-b">
+                                    <td class="px-4 py-2 font-mono">60%</td>
+                                    <td class="px-4 py-2">Standard</td>
+                                    <td class="px-4 py-2">Jul 1, 2024</td>
+                                    <td class="px-4 py-2">Dec 31, 2024</td>
+                                </tr>
+                                <tr class="split-history-row">
+                                    <td class="px-4 py-2 font-mono">50%</td>
+                                    <td class="px-4 py-2">Entry</td>
+                                    <td class="px-4 py-2">Jan 15, 2024</td>
+                                    <td class="px-4 py-2">Jun 30, 2024</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button onclick="addSplitChange()" class="mt-2 text-sm text-purple-600 hover:text-purple-800">
+                        <i class="fas fa-plus mr-1"></i> Add Split Change
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6 border-t bg-gray-50 flex justify-end gap-3">
+                <button onclick="closeEditModal()" class="px-6 py-2 border rounded-lg hover:bg-gray-100">
+                    Cancel
+                </button>
+                <button onclick="saveTrainer()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                    <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Certification Modal -->
+    <div id="edit-cert-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-certificate text-purple-600 mr-2"></i>
+                        Update Certification
+                    </h3>
+                    <button onclick="closeCertModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">Trainer</label>
+                    <input type="text" class="w-full border rounded px-3 py-2 mt-1 bg-gray-100" id="cert-trainer-name" readonly>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">Primary Certification</label>
+                    <select class="w-full border rounded px-3 py-2 mt-1" id="cert-type">
+                        <option value="NASM-CPT">NASM-CPT</option>
+                        <option value="ACE-CPT">ACE-CPT</option>
+                        <option value="ACSM-CPT">ACSM-CPT</option>
+                        <option value="NSCA-CSCS">NSCA-CSCS</option>
+                        <option value="ISSA-CPT">ISSA-CPT</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Cert Expiration</label>
+                        <input type="date" class="w-full border rounded px-3 py-2 mt-1" id="cert-expiry">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">CPR/AED Expiration</label>
+                        <input type="date" class="w-full border rounded px-3 py-2 mt-1" id="cpr-expiry">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">CEUs Completed</label>
+                        <input type="number" class="w-full border rounded px-3 py-2 mt-1" id="ceus-completed" value="0">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">CEUs Required</label>
+                        <input type="number" class="w-full border rounded px-3 py-2 mt-1" id="ceus-required" value="20">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">CEU Deadline</label>
+                    <input type="date" class="w-full border rounded px-3 py-2 mt-1" id="ceu-deadline">
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">Notes</label>
+                    <textarea class="w-full border rounded px-3 py-2 mt-1" rows="2" id="cert-notes" placeholder="Additional certifications, specializations, etc."></textarea>
+                </div>
+            </div>
+
+            <div class="p-6 border-t bg-gray-50 flex justify-end gap-3">
+                <button onclick="closeCertModal()" class="px-6 py-2 border rounded-lg hover:bg-gray-100">
+                    Cancel
+                </button>
+                <button onclick="saveCertification()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                    <i class="fas fa-save mr-2"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Split Change Modal -->
+    <div id="add-split-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-percentage text-purple-600 mr-2"></i>
+                        Schedule Split Change
+                    </h3>
+                    <button onclick="closeSplitModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-4">
+                    <p class="text-sm text-amber-800">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <strong>Important:</strong> Split changes apply from the effective date forward. Past sessions retain their original split rate.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">New Split Percentage</label>
+                    <div class="flex items-center gap-2 mt-1">
+                        <input type="number" min="0" max="100" class="border rounded px-3 py-2 w-24" id="new-split-pct" value="70">
+                        <span class="text-gray-500">%</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">New Tier</label>
+                    <select class="w-full border rounded px-3 py-2 mt-1" id="new-split-tier">
+                        <option value="entry">Entry (50%)</option>
+                        <option value="standard">Standard (60%)</option>
+                        <option value="senior">Senior (70%)</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">Effective Date</label>
+                    <input type="date" class="w-full border rounded px-3 py-2 mt-1" id="new-split-date">
+                    <p class="text-xs text-gray-500 mt-1">Typically first of month, but can be mid-month if needed</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-700">Reason (optional)</label>
+                    <input type="text" class="w-full border rounded px-3 py-2 mt-1" id="new-split-reason" placeholder="e.g., Promotion, Performance review">
+                </div>
+            </div>
+
+            <div class="p-6 border-t bg-gray-50 flex justify-end gap-3">
+                <button onclick="closeSplitModal()" class="px-6 py-2 border rounded-lg hover:bg-gray-100">
+                    Cancel
+                </button>
+                <button onclick="confirmSplitChange()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    <i class="fas fa-check mr-2"></i> Schedule Change
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== TRAINER DATA =====
+        const trainers = [
+            {
+                id: 1,
+                name: 'JR Prieto-Romero',
+                shortName: 'JR',
+                setmoreName: 'JR Prieto-Romero',
+                gmsId: 'STF-00142',
+                email: 'jr@g3sports.com',
+                status: 'active',
+                currentSplit: 70,
+                tier: 'senior',
+                splitEffective: '2025-01-01',
+                splitHistory: [
+                    { split: 70, tier: 'senior', effective: '2025-01-01', end: null },
+                    { split: 60, tier: 'standard', effective: '2024-07-01', end: '2024-12-31' },
+                    { split: 50, tier: 'entry', effective: '2024-01-01', end: '2024-06-30' }
+                ],
+                certification: 'NASM-CPT',
+                certExpiry: '2026-08-15',
+                cprExpiry: '2026-03-20',
+                ceusCompleted: 12,
+                ceusRequired: 20,
+                ceuDeadline: '2026-08-15'
+            },
+            {
+                id: 2,
+                name: 'Josiah Iwamizu',
+                shortName: 'Josiah',
+                setmoreName: 'Josiah Iwamizu',
+                gmsId: 'STF-00089',
+                email: 'josiah@g3sports.com',
+                status: 'active',
+                currentSplit: 70,
+                tier: 'senior',
+                splitEffective: '2024-06-01',
+                splitHistory: [
+                    { split: 70, tier: 'senior', effective: '2024-06-01', end: null }
+                ],
+                certification: 'NASM-CPT',
+                certExpiry: '2027-03-10',
+                cprExpiry: '2026-09-15',
+                ceusCompleted: 20,
+                ceusRequired: 20,
+                ceuDeadline: '2027-03-10'
+            },
+            {
+                id: 3,
+                name: 'Mason Morgan',
+                shortName: 'Mason',
+                setmoreName: 'Mason Morgan',
+                gmsId: 'STF-00156',
+                email: 'mason@g3sports.com',
+                status: 'active',
+                currentSplit: 70,
+                tier: 'senior',
+                splitEffective: '2025-01-01',
+                splitHistory: [
+                    { split: 70, tier: 'senior', effective: '2025-01-01', end: null },
+                    { split: 60, tier: 'standard', effective: '2024-04-01', end: '2024-12-31' }
+                ],
+                certification: 'ACE-CPT',
+                certExpiry: '2026-11-30',
+                cprExpiry: '2026-05-10',
+                ceusCompleted: 8,
+                ceusRequired: 20,
+                ceuDeadline: '2026-11-30'
+            },
+            {
+                id: 4,
+                name: 'Kyra Schulties',
+                shortName: 'Kyra',
+                setmoreName: 'Kyra Schulties',
+                gmsId: 'STF-00178',
+                email: 'kyra@g3sports.com',
+                status: 'active',
+                currentSplit: 70,
+                tier: 'senior',
+                splitEffective: '2025-01-01',
+                splitHistory: [
+                    { split: 70, tier: 'senior', effective: '2025-01-01', end: null }
+                ],
+                certification: 'NASM-CPT',
+                certExpiry: '2026-02-15',
+                cprExpiry: '2025-12-01',
+                ceusCompleted: 15,
+                ceusRequired: 20,
+                ceuDeadline: '2026-02-15'
+            },
+            {
+                id: 5,
+                name: 'Becca Reeve',
+                shortName: 'Becca',
+                setmoreName: 'Becca Reeve',
+                gmsId: 'STF-00134',
+                email: 'becca@g3sports.com',
+                status: 'active',
+                currentSplit: 70,
+                tier: 'senior',
+                splitEffective: '2024-09-01',
+                splitHistory: [
+                    { split: 70, tier: 'senior', effective: '2024-09-01', end: null }
+                ],
+                certification: 'ACSM-CPT',
+                certExpiry: '2027-01-20',
+                cprExpiry: '2026-07-15',
+                ceusCompleted: 18,
+                ceusRequired: 20,
+                ceuDeadline: '2027-01-20'
+            },
+            {
+                id: 6,
+                name: 'Steve Sackmann',
+                shortName: 'Steve',
+                setmoreName: 'Steve Sackmann',
+                gmsId: 'STF-00201',
+                email: 'steve@g3sports.com',
+                status: 'active',
+                currentSplit: 70,
+                tier: 'senior',
+                splitEffective: '2025-01-01',
+                splitHistory: [
+                    { split: 70, tier: 'senior', effective: '2025-01-01', end: null }
+                ],
+                certification: 'NSCA-CSCS',
+                certExpiry: '2026-06-30',
+                cprExpiry: '2026-01-05',
+                ceusCompleted: 10,
+                ceusRequired: 20,
+                ceuDeadline: '2026-06-30'
+            },
+            {
+                id: 7,
+                name: 'Conner McAdams',
+                shortName: 'Conner',
+                setmoreName: 'Conner McAdams',
+                gmsId: 'STF-00223',
+                email: 'conner@g3sports.com',
+                status: 'active',
+                currentSplit: 50,
+                tier: 'entry',
+                splitEffective: '2025-09-01',
+                splitHistory: [
+                    { split: 50, tier: 'entry', effective: '2025-09-01', end: null }
+                ],
+                certification: 'NASM-CPT',
+                certExpiry: '2027-09-01',
+                cprExpiry: '2026-08-15',
+                ceusCompleted: 0,
+                ceusRequired: 20,
+                ceuDeadline: '2027-09-01'
+            },
+            {
+                id: 8,
+                name: 'Jess Caze',
+                shortName: 'Jess',
+                setmoreName: 'Jess Caze',
+                gmsId: 'STF-00218',
+                email: 'jess@g3sports.com',
+                status: 'active',
+                currentSplit: 50,
+                tier: 'entry',
+                splitEffective: '2025-08-01',
+                splitHistory: [
+                    { split: 50, tier: 'entry', effective: '2025-08-01', end: null }
+                ],
+                certification: 'ACE-CPT',
+                certExpiry: '2027-08-01',
+                cprExpiry: '2026-07-20',
+                ceusCompleted: 2,
+                ceusRequired: 20,
+                ceuDeadline: '2027-08-01'
+            },
+            {
+                id: 9,
+                name: 'Jayna Davis',
+                shortName: 'Jayna',
+                setmoreName: 'Jayna Davis',
+                gmsId: 'STF-00225',
+                email: 'jayna@g3sports.com',
+                status: 'active',
+                currentSplit: 50,
+                tier: 'entry',
+                splitEffective: '2025-10-15',
+                splitHistory: [
+                    { split: 50, tier: 'entry', effective: '2025-10-15', end: null }
+                ],
+                certification: 'NASM-CPT',
+                certExpiry: '2027-10-15',
+                cprExpiry: '2026-10-01',
+                ceusCompleted: 0,
+                ceusRequired: 20,
+                ceuDeadline: '2027-10-15'
+            }
+        ];
+
+        let currentEditingTrainer = null;
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Deactivate all tabs
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+                el.classList.add('border-gray-200');
+            });
+
+            // Show selected content
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            // Activate selected tab
+            const tabBtn = document.getElementById(`tab-${tabName}`);
+            tabBtn.classList.add('active');
+            tabBtn.classList.remove('border-gray-200');
+        }
+
+        // ===== RENDER TRAINER LIST =====
+        function renderTrainerList() {
+            const container = document.getElementById('trainer-list');
+            container.innerHTML = trainers.map(t => `
+                <div class="border rounded-lg p-4 hover:shadow-md transition-shadow ${t.status !== 'active' ? 'opacity-60' : ''}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                                <span class="text-purple-700 font-bold text-lg">${t.shortName.charAt(0)}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">${t.name}</h3>
+                                <p class="text-sm text-gray-500">
+                                    <span class="font-mono bg-gray-100 px-1 rounded">${t.gmsId}</span>
+                                    <span class="mx-2">|</span>
+                                    ${t.certification}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-600">${t.currentSplit}%</p>
+                                <p class="text-xs text-gray-500">${capitalize(t.tier)} Tier</p>
+                            </div>
+                            <div class="text-center">
+                                <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(t.status)}">
+                                    ${capitalize(t.status)}
+                                </span>
+                            </div>
+                            <button onclick="editTrainer(${t.id})" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-edit text-gray-500"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Split History Preview -->
+                    <div class="mt-3 pt-3 border-t flex items-center gap-4 text-sm text-gray-500">
+                        <span><i class="fas fa-history mr-1"></i> Split since: ${formatDate(t.splitEffective)}</span>
+                        <span class="mx-2">|</span>
+                        <span><i class="fas fa-certificate mr-1"></i> Cert expires: ${formatDate(t.certExpiry)}</span>
+                        <span class="mx-2">|</span>
+                        <span><i class="fas fa-graduation-cap mr-1"></i> CEUs: ${t.ceusCompleted}/${t.ceusRequired}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== RENDER CERTIFICATION TABLE =====
+        function renderCertTable() {
+            const tbody = document.getElementById('cert-table-body');
+            const today = new Date();
+            const alerts = [];
+
+            tbody.innerHTML = trainers.filter(t => t.status === 'active').map(t => {
+                const certDate = new Date(t.certExpiry);
+                const cprDate = new Date(t.cprExpiry);
+                const ceuDate = new Date(t.ceuDeadline);
+
+                const certDaysUntil = Math.ceil((certDate - today) / (1000 * 60 * 60 * 24));
+                const cprDaysUntil = Math.ceil((cprDate - today) / (1000 * 60 * 60 * 24));
+
+                // Track alerts
+                if (certDaysUntil < 0) alerts.push({ trainer: t.name, type: 'Certification EXPIRED', urgent: true });
+                else if (certDaysUntil < 60) alerts.push({ trainer: t.name, type: `Cert expires in ${certDaysUntil} days`, urgent: certDaysUntil < 30 });
+
+                if (cprDaysUntil < 0) alerts.push({ trainer: t.name, type: 'CPR/AED EXPIRED', urgent: true });
+                else if (cprDaysUntil < 30) alerts.push({ trainer: t.name, type: `CPR expires in ${cprDaysUntil} days`, urgent: cprDaysUntil < 14 });
+
+                return `
+                    <tr class="table-row border-b ${getCertRowClass(certDaysUntil, cprDaysUntil)}">
+                        <td class="px-4 py-3 font-medium">${t.name}</td>
+                        <td class="px-4 py-3">${t.certification}</td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="${getCertBadgeClass(certDaysUntil)}">${formatDate(t.certExpiry)}</span>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="${getCertBadgeClass(cprDaysUntil)}">${formatDate(t.cprExpiry)}</span>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="font-mono">${t.ceusCompleted}/${t.ceusRequired}</span>
+                            ${t.ceusCompleted >= t.ceusRequired ? '<i class="fas fa-check text-green-500 ml-1"></i>' : ''}
+                        </td>
+                        <td class="px-4 py-3 text-center">${formatDate(t.ceuDeadline)}</td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="editCertification(${t.id})" class="text-purple-600 hover:text-purple-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update alerts section
+            renderCertAlerts(alerts);
+            document.getElementById('cert-alerts').textContent = alerts.filter(a => a.urgent).length;
+        }
+
+        function renderCertAlerts(alerts) {
+            const section = document.getElementById('cert-alerts-section');
+            if (alerts.length === 0) {
+                section.innerHTML = `
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <p class="text-green-800"><i class="fas fa-check-circle mr-2"></i> All certifications are current!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            section.innerHTML = alerts.map(a => `
+                <div class="p-3 ${a.urgent ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'} rounded-lg border flex items-center justify-between">
+                    <div>
+                        <span class="${a.urgent ? 'text-red-800' : 'text-yellow-800'}">
+                            <i class="fas ${a.urgent ? 'fa-exclamation-circle' : 'fa-exclamation-triangle'} mr-2"></i>
+                            <strong>${a.trainer}:</strong> ${a.type}
+                        </span>
+                    </div>
+                    <button class="text-sm ${a.urgent ? 'text-red-600' : 'text-yellow-600'} hover:underline">
+                        View Details
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function editTrainer(id) {
+            currentEditingTrainer = trainers.find(t => t.id === id);
+            if (!currentEditingTrainer) return;
+
+            document.getElementById('modal-title').textContent = `Edit: ${currentEditingTrainer.name}`;
+            document.getElementById('gms-staff-id').value = currentEditingTrainer.gmsId;
+            document.getElementById('trainer-name').value = currentEditingTrainer.name;
+            document.getElementById('setmore-name').value = currentEditingTrainer.setmoreName;
+            document.getElementById('trainer-email').value = currentEditingTrainer.email;
+            document.getElementById('trainer-status').value = currentEditingTrainer.status;
+            document.getElementById('current-split').value = currentEditingTrainer.currentSplit;
+            document.getElementById('trainer-tier').value = currentEditingTrainer.tier;
+            document.getElementById('split-effective').value = currentEditingTrainer.splitEffective;
+
+            // Render split history
+            const historyBody = document.getElementById('split-history-body');
+            historyBody.innerHTML = currentEditingTrainer.splitHistory.map(h => `
+                <tr class="split-history-row border-b">
+                    <td class="px-4 py-2 font-mono">${h.split}%</td>
+                    <td class="px-4 py-2">${capitalize(h.tier)}</td>
+                    <td class="px-4 py-2">${formatDate(h.effective)}</td>
+                    <td class="px-4 py-2 ${h.end ? '' : 'text-green-600'}">${h.end ? formatDate(h.end) : 'Current'}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('edit-trainer-modal').classList.remove('hidden');
+        }
+
+        function openAddTrainerModal() {
+            currentEditingTrainer = null;
+            document.getElementById('modal-title').textContent = 'Add New Trainer';
+            document.getElementById('gms-staff-id').value = '';
+            document.getElementById('trainer-name').value = '';
+            document.getElementById('setmore-name').value = '';
+            document.getElementById('trainer-email').value = '';
+            document.getElementById('trainer-status').value = 'active';
+            document.getElementById('current-split').value = '50';
+            document.getElementById('trainer-tier').value = 'entry';
+            document.getElementById('split-effective').value = new Date().toISOString().split('T')[0];
+            document.getElementById('split-history-body').innerHTML = '';
+
+            document.getElementById('edit-trainer-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-trainer-modal').classList.add('hidden');
+            currentEditingTrainer = null;
+        }
+
+        function editCertification(id) {
+            const trainer = trainers.find(t => t.id === id);
+            if (!trainer) return;
+
+            document.getElementById('cert-trainer-name').value = trainer.name;
+            document.getElementById('cert-type').value = trainer.certification;
+            document.getElementById('cert-expiry').value = trainer.certExpiry;
+            document.getElementById('cpr-expiry').value = trainer.cprExpiry;
+            document.getElementById('ceus-completed').value = trainer.ceusCompleted;
+            document.getElementById('ceus-required').value = trainer.ceusRequired;
+            document.getElementById('ceu-deadline').value = trainer.ceuDeadline;
+
+            currentEditingTrainer = trainer;
+            document.getElementById('edit-cert-modal').classList.remove('hidden');
+        }
+
+        function closeCertModal() {
+            document.getElementById('edit-cert-modal').classList.add('hidden');
+        }
+
+        function addSplitChange() {
+            document.getElementById('new-split-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('add-split-modal').classList.remove('hidden');
+        }
+
+        function closeSplitModal() {
+            document.getElementById('add-split-modal').classList.add('hidden');
+        }
+
+        // ===== SAVE FUNCTIONS =====
+        function saveTrainer() {
+            // Demo - just show success
+            alert('Trainer saved successfully! (Demo mode - changes not persisted)');
+            closeEditModal();
+        }
+
+        function saveCertification() {
+            // Demo - just show success
+            alert('Certification updated! (Demo mode - changes not persisted)');
+            closeCertModal();
+        }
+
+        function confirmSplitChange() {
+            const date = document.getElementById('new-split-date').value;
+            const split = document.getElementById('new-split-pct').value;
+            alert(`Split change to ${split}% scheduled for ${date}. (Demo mode - changes not persisted)`);
+            closeSplitModal();
+        }
+
+        function saveMinWage() {
+            const rate = document.getElementById('min-wage-input').value;
+            const date = document.getElementById('min-wage-date').value;
+            alert(`Minimum wage updated to $${rate}/hr effective ${date}. (Demo mode - changes not persisted)`);
+        }
+
+        function saveRookiesSplit() {
+            const split = document.getElementById('rookies-split-input').value;
+            const date = document.getElementById('rookies-split-date').value;
+            alert(`Rookies split updated to ${split}% effective ${date}. (Demo mode - changes not persisted)`);
+        }
+
+        // ===== HELPER FUNCTIONS =====
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'active': return 'bg-green-100 text-green-700';
+                case 'inactive': return 'bg-gray-100 text-gray-700';
+                case 'onleave': return 'bg-yellow-100 text-yellow-700';
+                default: return 'bg-gray-100 text-gray-700';
+            }
+        }
+
+        function getCertRowClass(certDays, cprDays) {
+            if (certDays < 0 || cprDays < 0) return 'cert-expired';
+            if (certDays < 60 || cprDays < 30) return 'cert-warning';
+            return '';
+        }
+
+        function getCertBadgeClass(daysUntil) {
+            if (daysUntil < 0) return 'px-2 py-1 bg-red-100 text-red-700 rounded text-sm font-medium';
+            if (daysUntil < 60) return 'px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-sm font-medium';
+            return 'text-gray-600';
+        }
+
+        // ===== INITIALIZE =====
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTrainerList();
+            renderCertTable();
+        });
+    </script>
+</body>
+</html>
